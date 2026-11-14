@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4f7cff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Akram Research">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Akram Research Studio</title>
+<style>
+  :root { --bg:#0a0f22; --card:rgba(255,255,255,0.06); --text:#e8ecf5; --muted:#9aa4b8; --accent:#4f7cff; --accent2:#8b5cf6; --border:rgba(255,255,255,0.12); color-scheme:dark; }
+  :root[data-theme="light"] { --bg:#f3f5fb; --card:#ffffff; --text:#1d2433; --muted:#6b7280; --accent:#2f5bea; --accent2:#7c3aed; --border:#e3e6ee; color-scheme:light; }
+  header h1 { background:linear-gradient(90deg,#7aa2ff,#b78cff); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .paper, header, .modal-box, .login-box, .menu { backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
+  .paper { transition:transform .2s ease, box-shadow .2s ease; }
+  .paper:hover { transform:translateY(-3px); box-shadow:0 10px 30px rgba(79,124,255,.18); }
+  .btn { transition:transform .15s ease, filter .15s ease; }
+  .btn:hover:not([disabled]) { transform:translateY(-1px); filter:brightness(1.1); }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:"Inter","Hind Siliguri",system-ui,-apple-system,"Segoe UI",sans-serif; background:radial-gradient(circle at top left,#1c2c63 0%,var(--bg) 45%) fixed, var(--bg); color:var(--text); min-height:100vh; }
+  header { background:var(--card); border-bottom:1px solid var(--border); padding:16px 20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+  header h1 { font-size:1.2rem; margin:0; }
+  .logout { background:none; border:1px solid var(--border); color:var(--text); padding:6px 12px; border-radius:8px; cursor:pointer; }
+  main { max-width:1000px; margin:0 auto; padding:20px; }
+  .toolbar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+  input[type=search], select, input[type=email], input[type=text] {
+    padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:var(--card); color:var(--text); font-size:1rem; flex:1; min-width:180px;
+  }
+  .tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+  .tab { padding:7px 14px; border-radius:999px; border:1px solid var(--border); background:var(--card); color:var(--text); cursor:pointer; font-size:0.9rem; }
+  .tab.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
+  .paper { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:8px; }
+  .paper h3 { margin:0; font-size:1rem; line-height:1.35; }
+  .meta { color:var(--muted); font-size:0.85rem; }
+  .actions { margin-top:auto; display:flex; gap:8px; flex-wrap:wrap; padding-top:8px; }
+  .btn { padding:7px 12px; border-radius:8px; border:1px solid var(--border); background:var(--card); color:var(--text); cursor:pointer; font-size:0.85rem; text-decoration:none; }
+  .btn.primary { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; border-color:transparent; }
+  .btn[disabled] { opacity:0.45; cursor:not-allowed; }
+  .empty { color:var(--muted); padding:30px 0; text-align:center; }
+  #login { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+  .login-box { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:28px; width:100%; max-width:380px; display:flex; flex-direction:column; gap:12px; }
+  .login-box h2 { margin:0; text-align:center; }
+  .login-box p { margin:0; color:var(--muted); font-size:0.9rem; text-align:center; }
+  .login-box .btn.primary { padding:11px; font-size:1rem; }
+  .msg { font-size:0.85rem; color:var(--muted); min-height:1.2em; text-align:center; }
+  .hidden { display:none !important; }
+  .topbar { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:18px; flex-wrap:wrap; }
+  .menu-wrap { position:relative; }
+  .menu { position:absolute; top:calc(100% + 6px); left:0; background:var(--card); border:1px solid var(--border); border-radius:10px; min-width:200px; max-height:320px; overflow:auto; z-index:20; box-shadow:0 8px 24px rgba(0,0,0,.15); }
+  .menu button { display:block; width:100%; text-align:left; padding:10px 14px; background:none; border:0; color:var(--text); cursor:pointer; font-size:0.95rem; }
+  .menu button:hover, .menu button.active { background:var(--bg); color:var(--accent); }
+  .modal { position:fixed; inset:0; background:rgba(0,0,0,.5); display:flex; align-items:center; justify-content:center; padding:16px; z-index:50; }
+  .modal-box { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; width:100%; max-width:420px; display:flex; flex-direction:column; gap:10px; }
+  .modal-box.wide { max-width:960px; height:88vh; }
+  .modal-head { display:flex; justify-content:space-between; align-items:center; gap:10px; font-weight:600; }
+  .modal-head span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .modal-box input { padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:1rem; }
+  body { padding-left:56px; }
+  .topbar > div:last-child { display:flex; flex-wrap:wrap; justify-content:flex-end; align-items:center; gap:8px; padding:6px; background:var(--card); border:1px solid var(--border); border-radius:14px; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
+  .topbar .btn { white-space:nowrap; padding:8px 14px; font-size:0.9rem; }
+  #helpBtn::before { content:"❓ "; }
+  #settingsBtn::before { content:"⚙️ "; }
+  #compareBtn::before { content:"⚖️ "; }
+  #addBtn::before { content:"➕ "; }
+  #sidebar { position:fixed; left:0; top:0; bottom:0; width:56px; background:var(--card); border-right:1px solid var(--border); display:flex; flex-direction:column; align-items:center; padding-top:12px; z-index:30; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
+  #globeBtn { width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:1.3rem; cursor:pointer; }
+  #globeBtn:hover { filter:brightness(1.15); }
+  #langPanel { position:fixed; left:64px; top:12px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px; display:flex; flex-direction:column; gap:4px; z-index:31; min-width:170px; box-shadow:0 8px 24px rgba(0,0,0,.2); backdrop-filter:blur(12px); }
+  #langPanel button { text-align:left; background:none; border:0; color:var(--text); padding:8px 10px; border-radius:8px; cursor:pointer; font-size:0.95rem; }
+  #langPanel button:hover, #langPanel button.active { background:var(--bg); color:var(--accent); }
+  #compareTable table { width:100%; border-collapse:collapse; font-size:0.9rem; }
+  #compareTable th, #compareTable td { border:1px solid var(--border); padding:8px; vertical-align:top; text-align:left; }
+  #compareTable thead th { background:var(--bg); }
+  .bub { padding:8px 12px; border-radius:12px; max-width:85%; white-space:pre-wrap; font-size:0.92rem; line-height:1.5; }
+  .bub.u { align-self:flex-end; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; }
+  .bub.b { align-self:flex-start; background:var(--bg); border:1px solid var(--border); }
+  #readerFrame { flex:1; width:100%; border:1px solid var(--border); border-radius:8px; background:#fff; }
+</style>
+</head>
+<body>
+<aside id="sidebar">
+  <button id="globeBtn" type="button" title="Language / Bhasha">🌐</button>
+</aside>
+<div id="langPanel" class="hidden">
+  <button type="button" data-lang="banglish">Banglish</button>
+  <button type="button" data-lang="bn">বাংলা</button>
+  <button type="button" data-lang="en">English</button>
+  <button type="button" data-lang="hi">हिन्दी</button>
+</div>
+
+
+<!-- LOGIN -->
+<section id="login">
+  <form class="login-box" id="loginForm" autocomplete="off">
+    <h2>Akram Research Studio</h2>
+    <p>Apnar naam likhe dhukun</p>
+    <input type="text" id="name" placeholder="Apnar naam" required>
+    <button class="btn primary" type="submit">Dhuko</button>
+  </form>
+</section>
+
+<!-- APP -->
+<div id="app" class="hidden">
+  <header>
+    <div>
+      <h1>Akram Research Studio</h1>
+      <p id="welcome" class="meta" style="margin:4px 0 0;"></p>
+    </div>
+    <div>
+      <button class="btn" id="themeBtn" type="button">Theme</button>
+      <button class="logout" id="logoutBtn" type="button">Logout</button>
+    </div>
+  </header>
+  <main>
+    <div style="text-align:center;padding:14px 10px;margin-bottom:18px;background:var(--card);border:1px solid var(--border);border-radius:12px;">
+      <p data-lang-line="bn" style="margin:0 0 6px;font-size:1.1rem;font-weight:600;">শিক্ষাই জাতির মেরুদণ্ড</p>
+      <p data-lang-line="hi" style="margin:0 0 6px;font-size:1.1rem;font-weight:600;">शिक्षा ही राष्ट्र की रीढ़ है</p>
+      <p data-lang-line="en" style="margin:0;font-size:1.1rem;font-weight:600;">Education is the backbone of a nation</p>
+    </div>
+    <div id="stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px;"></div>
+    <div class="topbar">
+      <div class="menu-wrap">
+        <button class="btn" id="menuBtn" type="button" aria-label="Menu">⋮</button>
+        <div class="menu hidden" id="countryMenu"></div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn" id="helpBtn" type="button">Help</button>
+        <button class="btn" id="settingsBtn" type="button">Setting</button>
+        <button class="btn" id="compareBtn" type="button">Tulona koro</button>
+        <button class="btn primary" id="addBtn" type="button">+ Notun paper</button>
+      </div>
+    </div>
+    <div class="toolbar">
+      <input type="search" id="search" placeholder="Paper er naam ba lekhok diye khujun">
+      <select id="sortSel">
+        <option value="year-desc">Notun age</option>
+        <option value="year-asc">Purono age</option>
+        <option value="title">Naam onujayi</option>
+      </select>
+      <select id="yearSel"><option value="">Sob bochor</option></select>
+      <select id="savedOnly">
+        <option value="all">Sob paper</option>
+        <option value="saved">Shudhu saved</option>
+      </select>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="empty hidden" id="empty">Kono paper paoa jay nai.</div>
+  </main>
+</div>
+
+<!-- In-app reader (download chhara) -->
+<div class="modal hidden" id="readerModal">
+  <div class="modal-box wide">
+    <div class="modal-head">
+      <span id="readerTitle"></span>
+      <div style="display:flex;gap:8px;">
+        <a class="btn" id="readerOpen" target="_blank" rel="noopener">Notun tab e khulun</a>
+        <button class="btn" id="closeReader" type="button">Bondho</button>
+      </div>
+    </div>
+    <iframe id="readerFrame" title="Paper"></iframe>
+    <div class="meta" id="readerDetails"></div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;">
+      <div style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:6px;">
+        <label class="meta">Chhobi (card e dekhabe)</label>
+        <input type="file" id="paperImgFile" accept="image/*">
+        <button class="btn" id="paperImgRemove" type="button">Chhobi muchhun</button>
+      </div>
+      <div style="flex:2;min-width:220px;display:flex;flex-direction:column;gap:6px;">
+        <label class="meta">Note</label>
+        <textarea id="noteText" rows="3" style="padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;"></textarea>
+        <button class="btn primary" id="noteSave" type="button">Note save</button>
+        <span class="meta" id="toolMsg"></span>
+      </div>
+    </div>
+    <p class="meta" id="readerNote"></p>
+  </div>
+</div>
+
+<!-- Paper comparison -->
+<div class="modal hidden" id="compareModal">
+  <div class="modal-box wide">
+    <div class="modal-head">
+      <span>Paper tulona</span>
+      <button class="btn" id="closeCompare" type="button">Bondho</button>
+    </div>
+    <div id="compareTable" style="overflow:auto;"></div>
+  </div>
+</div>
+
+<!-- Settings: wallpaper, rong, naam -->
+<div class="modal hidden" id="settingsModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span>Setting</span>
+      <button class="btn" id="closeSettings" type="button">Bondho</button>
+    </div>
+    <label class="meta">Wallpaper (click kore pick korun)</label>
+    <div id="wallGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:10px;max-height:280px;overflow:auto;padding:2px;"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn primary" id="addWallBtn" type="button">+ Notun wallpaper</button>
+      <button class="btn" id="resetWallpaper" type="button">Default e pheraa</button>
+    </div>
+    <input type="file" id="wallpaperFile" accept="image/*" class="hidden">
+    <label class="meta">Rong (accent colour)</label>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <input type="color" id="accentInput" value="#4f7cff" style="width:60px;height:38px;padding:2px;">
+      <button class="btn" id="resetAccent" type="button">Rong reset</button>
+    </div>
+    <label class="meta">Naam</label>
+    <div style="display:flex;gap:8px;">
+      <input type="text" id="settingsName" placeholder="Apnar naam">
+      <button class="btn" id="resetName" type="button">Naam reset</button>
+    </div>
+    <button class="btn" id="resetAll" type="button">Sob setting reset</button>
+  </div>
+</div>
+
+<!-- Crop (wallpaper) -->
+<div class="modal hidden" id="cropModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span>Chhobi crop korun</span>
+      <button class="btn" id="cropCancel" type="button">Batil</button>
+    </div>
+    <canvas id="cropCanvas" style="width:100%;border-radius:8px;border:1px solid var(--border);touch-action:none;cursor:move;background:#000;"></canvas>
+    <p class="meta" style="margin:0;">Chhobi te mouse diye tana (drag) korun ar zoom diye boro/choto korun.</p>
+    <label class="meta">Aakar (ratio)</label>
+    <select id="cropRatio">
+      <option value="1.7777777778">16:9 (desktop)</option>
+      <option value="1.3333333333">4:3</option>
+      <option value="1">1:1 (square)</option>
+      <option value="0.5625">9:16 (phone)</option>
+    </select>
+    <label class="meta">Zoom</label>
+    <input type="range" id="cropZoom" min="1" max="3" step="0.01" value="1">
+    <button class="btn primary" id="cropSave" type="button">Crop kore save</button>
+  </div>
+</div>
+
+<!-- Help assistant -->
+<div class="modal hidden" id="helpModal">
+  <div class="modal-box wide">
+    <div class="modal-head">
+      <span>Help assistant</span>
+      <button class="btn" id="closeHelp" type="button">Bondho</button>
+    </div>
+    <div id="helpLog" style="flex:1;overflow:auto;display:flex;flex-direction:column;gap:8px;padding:6px;min-height:200px;"></div>
+    <div id="helpQuick" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+    <form id="helpForm" style="display:flex;gap:8px;">
+      <input type="text" id="helpInput" placeholder="Prosno likhun (jemon: paper kivabe save korbo)" style="flex:1;" autocomplete="off">
+      <button class="btn primary" type="submit">Pathan</button>
+    </form>
+  </div>
+</div>
+
+<!-- Notun paper add form -->
+<div class="modal hidden" id="addModal">
+  <form class="modal-box" id="addForm" autocomplete="off">
+    <div class="modal-head">
+      <span>Notun paper add koro</span>
+      <button class="btn" type="button" id="closeAdd">Bondho</button>
+    </div>
+    <input type="text" id="aTitle" placeholder="Paper er naam" required>
+    <input type="text" id="aAuthor" placeholder="Lekhok" required>
+    <input type="number" id="aYear" placeholder="Bochor (jemon 2024)" min="1900" max="2100" required>
+    <input type="text" id="aCountry" placeholder="Desh (jemon Bangladesh)" required>
+    <input type="url" id="aUrl" placeholder="PDF ba article link (optional)">
+    <button class="btn primary" type="submit">Save koro</button>
+  </form>
+</div>
+
+<script>
+/* ===== DATA: ekhane apnar nijer paper gulo add korun =====
+   url: PDF er link (na thakle download button disabled thakbe) */
+const PAPERS = [
+  { id:"p1", country:"Switzerland", title:"A Novel Framework for Spatio-Temporal Prediction of Environmental Data Using Deep Learning", author:"Federico Amato, Fabian Guignard, Sylvain Robert, Mikhail Kanevski", year:2020, url:"https://www.nature.com/articles/s41598-020-79148-7.pdf" },
+  { id:"p2", country:"USA", title:"Data-Driven Dimensionality Reduction and Causal Inference in Spatiotemporal Climate Fields", author:"Fabrizio Falasca, Pavel Perezhogin, Laure Zanna", year:2024, url:"https://repository.library.noaa.gov/view/noaa/66377/noaa_66377_DS1.pdf" },
+  { id:"p3", country:"International", title:"Challenges in Data-Driven Geospatial Modeling for Environmental Research and Practice", author:"Diana Koldasbayeva, Polina Tregubova, Mikhail Gasanov, Alexey Zaytsev, Anna Petrovskaia, Evgeny Burnaev", year:2024, url:"https://www.nature.com/articles/s41467-024-55240-8.pdf" },
+  { id:"p4", country:"USA", title:"Modeling Multivariate Spatial-Temporal Data with Latent Low-Dimensional Dynamics", author:"Elynn Y. Chen, Xin Yun, Rong Chen, Qiwei Yao", year:2020, url:"https://stats.lse.ac.uk/q.yao/qyao.links/paper/cycy20.pdf" },
+  { id:"p5", country:"Spain", title:"Comparison of Linear, Generalized Additive Models and Machine Learning Algorithms for Spatial Climate Interpolation", author:"Josep Bonsoms, Miquel Ninyerola", year:2024, url:"https://link.springer.com/article/10.1007/s00704-023-04725-5" },
+  { id:"p6", country:"Italy", title:"Modeling Spatio-Temporal Locality in Multi-Step Forecasting of Geo-Referenced Time Series", author:"Annunziata D'Aversa, Gianvito Pio, Michelangelo Ceci", year:2025, url:"https://link.springer.com/article/10.1007/s10994-025-06875-1" },
+  { id:"p7", country:"USA", title:"A Multivariate Global Spatiotemporal Stochastic Generator for Climate Ensembles", author:"Matthew Edwards, Stefano Castruccio, Dorit Hammerling", year:2019, url:"https://link.springer.com/article/10.1007/s13253-019-00352-8" },
+  { id:"p8", country:"Poland", title:"Interpolation, Satellite-Based Machine Learning, or Meteorological Simulation? A Comparison Analysis for Spatio-Temporal Mapping of Mesoscale Urban Air Temperature", author:"Amir Hassani, Gabriela Sousa Santos, Philipp Schneider, Núria Balaguer Castell", year:2024, url:"https://link.springer.com/article/10.1007/s10666-023-09943-9" },
+  { id:"p9", country:"Brazil", title:"Spatiotemporal Modelling with Dynamic Deformation for Nonstationary Covariance Structures", author:"Lekhok tothyo jachai baki", year:2025, url:"https://academic.oup.com/jrsssc/article/74/3/743/7933113" },
+  { id:"p10", country:"China", title:"A Multi-Scale Spatiotemporal Modeling Approach to Explore Vegetation Dynamics Patterns Under Global Climate Change", author:"Bingwen Qiu, Zhuangzhuang Wang, Zhenghong Tang, Zhe Liu, Difei Lu, Chongcheng Chen, Nan Chen", year:2016, url:"https://www.tandfonline.com/doi/pdf/10.1080/15481603.2016.1184741" },
+  { id:"q1", country:"USA", title:"Attention Is All You Need", author:"Ashish Vaswani et al.", year:2017, url:"" },
+  { id:"q2", country:"USA", title:"BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding", author:"Jacob Devlin et al.", year:2019, url:"" },
+  { id:"q3", country:"China", title:"Deep Residual Learning for Image Recognition", author:"Kaiming He et al.", year:2016, url:"" },
+  { id:"q4", country:"Canada", title:"ImageNet Classification with Deep Convolutional Neural Networks", author:"Alex Krizhevsky et al.", year:2012, url:"" },
+  { id:"q5", country:"Canada", title:"Generative Adversarial Nets", author:"Ian Goodfellow et al.", year:2014, url:"" },
+  { id:"q6", country:"Netherlands", title:"Adam: A Method for Stochastic Optimization", author:"Diederik P. Kingma, Jimmy Ba", year:2015, url:"" },
+  { id:"q7", country:"Canada", title:"Dropout: A Simple Way to Prevent Neural Networks from Overfitting", author:"Nitish Srivastava et al.", year:2014, url:"" },
+  { id:"q8", country:"Switzerland", title:"A Survey of Deep Learning", author:"Jürgen Schmidhuber", year:2015, url:"" },
+  { id:"q9", country:"Bangladesh", title:"Approach to Improving Machine Learning Models for Intrusion Detection System", author:"Ahmad Ibtisam Labib et al.", year:2022, url:"https://dspace.iiuc.ac.bd/collections/7d167e3b-de85-4a71-aae7-6988afe6ecde/browse/title" },
+  { id:"q11", country:"UK", title:"Playing Atari with Deep Reinforcement Learning", author:"Volodymyr Mnih et al.", year:2013, url:"" },
+  { id:"q12", country:"UK", title:"Human-Level Control Through Deep Reinforcement Learning", author:"Volodymyr Mnih et al.", year:2015, url:"" },
+  { id:"q13", country:"UK", title:"Mastering the Game of Go with Deep Neural Networks and Tree Search", author:"David Silver et al.", year:2016, url:"" },
+  { id:"q14", country:"Netherlands", title:"Auto-Encoding Variational Bayes", author:"Diederik P. Kingma, Max Welling", year:2014, url:"" },
+  { id:"q15", country:"Germany", title:"U-Net: Convolutional Networks for Biomedical Image Segmentation", author:"Olaf Ronneberger et al.", year:2015, url:"" },
+  { id:"q16", country:"Canada", title:"Neural Machine Translation by Jointly Learning to Align and Translate", author:"Dzmitry Bahdanau et al.", year:2015, url:"" },
+  { id:"q17", country:"USA", title:"Denoising Diffusion Probabilistic Models", author:"Jonathan Ho et al.", year:2020, url:"" },
+  { id:"q18", country:"Germany", title:"An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale", author:"Alexey Dosovitskiy et al.", year:2021, url:"" },
+  { id:"q19", country:"USA", title:"Learning Transferable Visual Models From Natural Language Supervision", author:"Alec Radford et al.", year:2021, url:"" },
+  { id:"q20", country:"Bangladesh", title:"Culturally Adaptive Neural Network for Detecting Cybersecurity Vulnerabilities in Bangladeshi Web Applications", author:"Shaolin, Mohosina Nawar et al.", year:2026, url:"https://dspace.bracu.ac.bd/items/33bec884-84e6-4ae2-a901-1792744ded28" },
+  { id:"q21", country:"China", title:"Big Data: A Survey", author:"Min Chen, Shiwen Mao, Yunhao Liu", year:2014, url:"" },
+  { id:"q22", country:"USA", title:"Data Mining: Concepts and Techniques", author:"Jiawei Han, Micheline Kamber, Jian Pei", year:2011, url:"" },
+  { id:"q23", country:"USA", title:"MapReduce: Simplified Data Processing on Large Clusters", author:"Jeffrey Dean, Sanjay Ghemawat", year:2004, url:"" },
+  { id:"q24", country:"USA", title:"Spark: Cluster Computing with Working Sets", author:"Matei Zaharia et al.", year:2010, url:"" },
+  { id:"q25", country:"USA", title:"The Fourth Paradigm: Data-Intensive Scientific Discovery", author:"Tony Hey et al.", year:2009, url:"" },
+  { id:"q26", country:"France", title:"Deep Learning for Time Series Classification", author:"Hassan Ismail Fawaz et al.", year:2019, url:"" },
+  { id:"q31", country:"Bangladesh", title:"Prevalence, Trends, and Inequality in Noncommunicable Diseases in Bangladesh", author:"Multiple Authors", year:2024, url:"https://pmc.ncbi.nlm.nih.gov/articles/PMC12060755/" },
+  { id:"q32", country:"Bangladesh", title:"Knowledge and Preventive Behaviors Regarding COVID-19 in Bangladesh", author:"Hosen et al.", year:2021, url:"https://pmc.ncbi.nlm.nih.gov/articles/PMC8092662/" },
+  { id:"q33", country:"Bangladesh", title:"Prevalence of Childhood Diarrhoeal Disease and Acute Respiratory Infection in Bangladesh", author:"Satyajit Kundu et al.", year:2022, url:"https://pmc.ncbi.nlm.nih.gov/articles/PMC8987759/" },
+  { id:"q34", country:"Bangladesh", title:"Spatio-temporal Patterns of Dengue in Bangladesh During 2019 to 2023", author:"Kamal Hossain et al.", year:2024, url:"https://pmc.ncbi.nlm.nih.gov/articles/PMC11446421/" },
+  { id:"q35", country:"Bangladesh", title:"Did the COVID-19 Pandemic Affect Levels of Burnout, Anxiety and Depression Among Doctors and Nurses in Bangladesh?", author:"Multiple Authors", year:2024, url:"https://pmc.ncbi.nlm.nih.gov/articles/PMC10921535/" },
+  { id:"q36", country:"Bangladesh", title:"Factors Associated with Knowledge and Practices of COVID-19 Prevention Among Mothers of Under-2 Children in Bangladesh", author:"Zarin Tasnim et al.", year:2024, url:"https://pmc.ncbi.nlm.nih.gov/articles/PMC11373813/" },
+  { id:"q37", country:"Bangladesh", title:"COVID-19 Vaccination Uptake in Remote Areas: Evidence from a Panel Survey in Bangladesh", author:"Rudolph et al.", year:2024, url:"https://pmc.ncbi.nlm.nih.gov/articles/PMC11315319/" },
+  { id:"q38", country:"Bangladesh", title:"Access to and Utilization of Maternal and Child Healthcare Services During COVID-19 Pandemic in Rural Bangladesh", author:"Multiple Authors", year:2024, url:"https://pmc.ncbi.nlm.nih.gov/articles/PMC11544479/" },
+  { id:"q39", country:"Bangladesh", title:"Mitigating the Impact of COVID-19 on Primary Healthcare Interventions for the Reduction of Under-5 Mortality in Bangladesh", author:"Amberbir et al.", year:2024, url:"https://pmc.ncbi.nlm.nih.gov/articles/PMC10917255/" },
+  { id:"q40", country:"Bangladesh", title:"Defining the Hidden Burden of Disease in Rural Communities in Bangladesh, Cambodia and Thailand", author:"Multiple Authors", year:2024, url:"https://pmc.ncbi.nlm.nih.gov/articles/PMC10961499/" },
+  { id:"q41", country:"Bangladesh", title:"Accessing Online Instruction amidst COVID-19 in Bangladesh: Barriers and Coping Strategies", author:"Rubina Khan et al.", year:2021, url:"https://eric.ed.gov/?id=EJ1314903" },
+  { id:"q42", country:"Bangladesh", title:"Technology Enabling the New Normal: How Students Respond to Classes", author:"Muhammad Shariat Ullah et al.", year:2022, url:"https://files.eric.ed.gov/fulltext/EJ1373638.pdf" },
+  { id:"q43", country:"Bangladesh", title:"Response, Readiness and Challenges of Online Teaching amid COVID-19 Pandemic", author:"Goutam Roy et al.", year:2023, url:"https://eric.ed.gov/?id=EJ1373153" },
+  { id:"q44", country:"Bangladesh", title:"Availability and Use of Technology for E-Learning: To What Extent Do These Impact Bangladeshi University Students?", author:"Md. Kamrul Hasan et al.", year:2022, url:"https://doi.org/10.12688/F1000RESEARCH.75532.1" },
+  { id:"q45", country:"Bangladesh", title:"Online Learning in Bangladesh: Pandemic Experiences and Post-Pandemic Lessons", author:"Abdullah Al Imran et al.", year:2025, url:"https://journal.moripublishing.com/index.php/jdle/article/view/1788" },
+  { id:"q46", country:"Bangladesh", title:"Teachers' and Students' Perceptions of Online Education in Bangladesh: Challenges and Solutions", author:"S. M. Samuel Karim et al.", year:2025, url:"https://link.springer.com/article/10.1007/s44217-025-00653-w" },
+  { id:"q47", country:"Bangladesh", title:"Evaluating the Online and Offline Learning Effectiveness in Bangladesh Using Analytic Hierarchy Process", author:"Syeda Sharaban Tahura et al.", year:2025, url:"https://link.springer.com/article/10.1007/s43621-025-00879-6" },
+  { id:"q48", country:"Bangladesh", title:"Internet Usage Patterns and Academic Performance: A Comparative Study of Public and Private University Students in Bangladesh", author:"Tasnim Tarannum et al.", year:2025, url:"https://eric.ed.gov/?id=EJ1480936" },
+  { id:"q51", country:"Bangladesh", title:"Impact of Microcredit on Second Generation Borrowers in Bangladesh: Revisited", author:"Laila Arjuman Ara et al.", year:2020, url:"https://doi.org/10.1177/1391561420908086" },
+  { id:"q52", country:"Bangladesh", title:"Does Microfinance Singlehandedly Empower Women? A Case Study of Bangladesh", author:"Sajeda Pervin et al.", year:2023, url:"https://doi.org/10.1177/21582440221096114" },
+  { id:"q53", country:"Bangladesh", title:"Bangladesh's Ready-Made Garments Sector Rebound: Revisiting Gendered Labor Precarity and Dependency", author:"Abu Faisal Md Khaled, Anas Ansar", year:2023, url:"https://doi.org/10.1177/20578911231170208" },
+  { id:"q54", country:"Bangladesh", title:"Predictors of Microfinance Sustainability: Empirical Evidence from Bangladesh", author:"Multiple Authors", year:2023, url:"https://doi.org/10.1080/23322039.2023.2202964" },
+  { id:"q55", country:"Bangladesh", title:"Even Though I Get a Loan, My Husband Controls It: Rhetoric Versus Reality of Empowering Bangladeshi Women Through Microfinance Programs", author:"Tunvir Ahamed Shohel et al.", year:2023, url:"https://link.springer.com/article/10.1057/s41287-022-00539-9" },
+  { id:"q56", country:"Bangladesh", title:"Microcredit, Gender Norms, and Women's Experiences of Economic Coercion and Agency in Matlab, Bangladesh", author:"AT Hoover et al.", year:2024, url:"https://pmc.ncbi.nlm.nih.gov/articles/PMC12373117/" },
+  { id:"q57", country:"Bangladesh", title:"Experience-Based Food Insecurity in Bangladesh: Evidence from Household Income and Expenditure Survey 2022", author:"Multiple Authors", year:2025, url:"https://pmc.ncbi.nlm.nih.gov/articles/PMC11761291/" },
+  { id:"q61", country:"Bangladesh", title:"The Impact of Crop Diversification on Food Security of Farmers in Northern Bangladesh", author:"Nazmun Nahar et al.", year:2024, url:"https://link.springer.com/article/10.1186/s40066-023-00463-z" },
+  { id:"q62", country:"Bangladesh", title:"Diversify, Produce or Buy? Factors Contributing to Household Dietary Diversity Among Shrimp and Non-Shrimp Farmers in Coastal Bangladesh", author:"Amelie Bernzen et al.", year:2022, url:"https://link.springer.com/article/10.1007/s12571-021-01245-w" },
+  { id:"q63", country:"Bangladesh", title:"Livelihood Training, Food Production, and Food Security Among Vulnerable Communities in Bangladesh", author:"Andy Tran et al.", year:2025, url:"https://doi.org/10.1186/s40066-024-00504-1" },
+  { id:"q64", country:"Bangladesh", title:"The Role of Farm Production Diversity in Enhancing Dietary Diversity and Food Security in Southern Bangladesh", author:"Hazrat Ali, Khondker Murshed-e-Jahan", year:2025, url:"https://link.springer.com/article/10.1007/s12571-025-01620-x" },
+  { id:"q65", country:"Bangladesh", title:"Disparities in Food Security and Nutrition Across Climate-Vulnerable Regions in Bangladesh", author:"Md. Jarif Mahbub et al.", year:2025, url:"https://link.springer.com/article/10.1186/s40066-025-00548-x" },
+  { id:"q66", country:"Bangladesh", title:"How Does Shrimp Farming Impact Agricultural Production and Food Security in Coastal Bangladesh?", author:"Zia Ahmed, Shrinidhi Ambinakudige", year:2024, url:"https://www.sciencedirect.com/science/article/pii/S0964569124002266" },
+  { id:"q67", country:"Bangladesh", title:"From Farm to Table: Multifactorial Determinants of Dietary Diversity and Food Security Within Sustainable Rice-Producing Systems in Bangladesh", author:"Babor Ahmad", year:2026, url:"https://iadns.onlinelibrary.wiley.com/doi/full/10.1002/efd2.70134" },
+  { id:"q71", country:"Bangladesh", title:"The Stressful Life of the Urban Consumers: The Case of Dhaka City Residents", author:"Muhammad Rehan Masoom", year:2021, url:"https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2021.747414/full" },
+  { id:"q72", country:"Bangladesh", title:"Constructing Identity and Social Capital on Facebook: A Feminist Digital Sociology of Bangladeshi Women", author:"MN Safa, T Akter, N Jahan", year:2025, url:"https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2025.1634395/pdf" },
+  { id:"q73", country:"Bangladesh", title:"Rethinking Women Empowerment in Rural Bangladesh: Male Out-Migration, Left-Behind Wives, and Changing Gender Roles", author:"Various Authors", year:2025, url:"https://doi.org/10.1016/j.ssaho.2025.101425" },
+  { id:"q74", country:"Bangladesh", title:"Urbanisation and Migration in Bangladesh: A Multi-Theoretical Sociological Study", author:"Shrabony Akter, Khandaker Mursheda Farhana", year:2026, url:"https://doi.org/10.64907/xkmf.v6i2.jscr.1" },
+  { id:"q75", country:"Bangladesh", title:"Role of Emotional Intelligence and Hopelessness in Predicting Psychological Adjustment Among Chittagong University Students in Bangladesh", author:"Ayesha Akter, Muhammad Hoque", year:2026, url:"https://www.ssbfnet.com/ojs/index.php/ijrbs/article/view/4822" },
+  { id:"q76", country:"Bangladesh", title:"Gender and Climate Change: Differential Risks and Resilience Among Internal Migrants at Their Urban Destination in Coastal Bangladesh", author:"Anouk Brisebois, Roman Hoffmann", year:2026, url:"https://www.tandfonline.com/doi/full/10.1080/17565529.2026.2651955" },
+  { id:"q81", country:"Bangladesh", title:"The Technical and Economic Study of Solar-Wind Hybrid Energy System in Coastal Area of Chittagong, Bangladesh", author:"Shuvankar Podder et al.", year:2015, url:"https://doi.org/10.1155/2015/482543" },
+  { id:"q82", country:"Bangladesh", title:"Design and Performance Analysis of a Hybrid Solar-Wind Tree System with IoT Based Real-Time Monitoring in Bangladesh", author:"Arman Jahan Eva et al.", year:2026, url:"https://doi.org/10.1016/j.ecmx.2026.101566" },
+  { id:"q83", country:"Bangladesh", title:"Techno-Economic Assessment of Utility-Scale Solar PV Systems in South-Eastern Bangladesh", author:"Foyzul Karim et al.", year:2025, url:"https://doi.org/10.1016/j.ecmx.2025.101374" },
+  { id:"q84", country:"Bangladesh", title:"Techno-Economic Feasibility and Sensitivity Analysis of Stand-Alone Hybrid Renewable Energy System", author:"Kazi Nazir et al.", year:2026, url:"https://doi.org/10.1016/j.ecmx.2025.101514" },
+  { id:"q85", country:"Bangladesh", title:"Design, Performance, and Techno-Economic Analysis of a Rooftop Grid-Tied PV System for a Remotely Located Building", author:"Umme Riazul Jannat Eiva et al.", year:2024, url:"https://doi.org/10.1049/rpg2.12793" },
+  { id:"q86", country:"Bangladesh", title:"Technoeconomic and Environmental Analysis of Institutional Grid-Connected PV Systems", author:"Multiple Authors", year:2025, url:"https://onlinelibrary.wiley.com/doi/10.1155/ijph/5222213" },
+  { id:"q87", country:"China", title:"Towards Collaborative Autonomous Operations in Power Infrastructure: A Robotic Fine Manipulation Framework", author:"Guangda Xu, You Dong", year:2026, url:"https://www.mdpi.com/1424-8220/26/18/5877" },
+  { id:"n1", country:"Bangladesh", title:"Students' Perceptions of Online Learning in Higher Secondary Education in Bangladesh During COVID-19 Pandemic", author:"Lekhok tothyo nei", year:2023, url:"" },
+  { id:"n2", country:"Bangladesh", title:"Online Learning in Enhancing Educational Outcomes: Bangladesh's Perspectives", author:"Shamsul Huq Bin Shahriar", year:2025, url:"" },
+  { id:"n3", country:"International", title:"Big Data Analytics and Big Data Science: A Survey", author:"Original article authors", year:2016, url:"" },
+  { id:"n4", country:"International", title:"15 Years of Big Data: A Systematic Literature Review", author:"Davide Tosi, Redon Kokaj, Marco Roccetti", year:2024, url:"" },
+  { id:"n5", country:"International", title:"A Comprehensive Survey on Big Data Analytics: Characteristics, Tools and Techniques", author:"Mohammad Shahnawaz, Manish Kumar", year:2025, url:"" },
+  { id:"n6", country:"Bangladesh", title:"Rapid Consumption Survey Methodology: An Empirical Study in Bangladesh", author:"Md. Saifur Rahman Mazumder, Md. Israt Rayhan", year:2022, url:"" },
+  { id:"n7", country:"Bangladesh", title:"Generalized Linear Mixed Model Approach for Analyzing Water, Sanitation, and Hygiene Facilities in Bangladesh: Insights from BDHS 2022 Data", author:"Mahmila Sanjana Mim, Md Lutfor Rahaman, Anamul Haque Sajib", year:2025, url:"" },
+  { id:"n8", country:"Bangladesh", title:"A Techno-Economic Analysis of a Hybrid Microgrid System in a Residential Area of Bangladesh: Optimizing Renewable Energy", author:"Md. Feroz Ali, Md. Alamgir Hossain, Mir Md. Julhash, Md. Ashikuzzaman, Md. Shafiul Alam, Md. Rafiqul Islam Sheikh", year:2024, url:"" },
+  { id:"n9", country:"Bangladesh", title:"Design and Implementation of a Hybrid Solar-Wind-Biomass Renewable Energy System Considering Meteorological Conditions with the Power System Performances", author:"Md. Delwar Hossen, Md. Fokhrul Islam, Md. Fatin Ishraque, Sk. A. Shezan, S. M. Arifuzzaman", year:2022, url:"" },
+  { id:"n10", country:"Bangladesh", title:"Feasibility Analysis of Hybrid Photovoltaic, Wind, and Fuel Cell Systems for On–Off-Grid Applications: A Case Study of Housing Project in Bangladesh", author:"Tahsin Anjum, M. A. Parvez Mahmud, Laveet Kumar, Mamdouh El Haj Assad, M. A. Ehyaei", year:2024, url:"" },
+  { id:"n11", country:"Bangladesh", title:"Sustainable Renewable Energy Integration on Expressways in Bangladesh: A Techno-Economic, Environmental, and Sensitivity Analysis of a Grid-Connected Hybrid System", author:"Abdulla Al Mamun, M. S. Hossain Lipu, Zia Ul Islam, Sourav Barua, Tuhibur Rahman, Tahia F. Karim, Abu M. Fuad, M. M. Naushad Ali", year:2025, url:"" },
+  { id:"n12", country:"Nigeria", title:"Big Data Stream Analysis: A Systematic Literature Review", author:"Taiwo Kolajo, Olawande Daramola, Ayodele Adebiyi", year:2019, url:"" },
+  { id:"n13", country:"USA", title:"Big Data and Predictive Analytics: A Systematic Review of Applications", author:"Amirhossein Jamarani, Saeid Haddadi, Raheleh Sarvizadeh, Mostafa Haghi Kashani, Mohammad Akbari, Saeed Moradi", year:2024, url:"" },
+  { id:"n14", country:"Slovenia", title:"Artificial Intelligence for Cybersecurity: Literature Review and Future Research Directions", author:"Ramanpreet Kaur, Dušan Gabrijelčič, Tomaž Klobučar", year:2023, url:"" },
+  { id:"n15", country:"Bangladesh", title:"BanglaRiceLeaf: A Benchmark Dataset for Automated Rice Leaf Disease Detection and Health Classification in Bangladesh", author:"Abu Bakar Siddique Mahi, Apurba Datta, Safi Ullah Chowdhury, Tasnim Jahin Mowla, Tanjina Helaly, Tahmid Hossain Ansari, Nasima Begum", year:2026, url:"" },
+  { id:"n16", country:"Bangladesh", title:"A Comparative Study of Machine Learning Models for Predicting Aman Rice Yields in Bangladesh", author:"Taufiqul Islam, Tanmoy Mazumder, Md. Nishad Shahriair Roni, Md. Sadmin Nur", year:2024, url:"" },
+  { id:"n17", country:"Bangladesh", title:"Bangladeshi Crops Leaf Disease Detection Using YOLOv8", author:"Md Shahriar Zaman Abid, Busrat Jahan, Abdullah Al Mamun, Md Jakir Hossen, Shazzad Hossain Mazumder", year:2024, url:"" },
+  { id:"n18", country:"Bangladesh", title:"SPAS-Dataset-BD: Dataset for Smart Precision Agriculture System in Bangladesh", author:"Rup Chowdhury, Fernaz Narin Nur, Muhammad Nazrul Islam, Md Nazmul Islam, Prapti Das, Arafat Sahin Afridi", year:2025, url:"" },
+  { id:"n19", country:"Bangladesh", title:"Knowledge, Attitude, and Practice of Bangladeshi Residents During COVID-19 Pandemic", author:"Mili Saha, Goutam Saha, Mynul Islam", year:2022, url:"" },
+  { id:"n20", country:"Bangladesh", title:"CNN-Based Crop Disease and Pest Detection Systems: Enhancing Accuracy and Efficiency in Agricultural Sustainability", author:"Noshin Un Noor, Faria Solaiman", year:2025, url:"" },
+  { id:"n21", country:"Bangladesh", title:"Agri-Vision Bangladesh: A Multi-Crop Augmented Image Dataset for Automated Disease Diagnosis in Bottle Gourd, Zucchini, Papaya, and Tomato", author:"Md Masum Billah, Md. Anisur Rahman, Saifuddin Sagor, Sanzida Parvin, Mohammad Shorif Uddin", year:2026, url:"" },
+  { id:"n22", country:"China", title:"A Systematic Review of Deep Learning and Machine Learning Applications in Longitudinal Multimodal Clinical Data", author:"Jinqian Pan, Tienyu Chang, Mengxian Lyu, Weimin Meng, Qingyu Wang, Yiling Ma et al.", year:2026, url:"" },
+  { id:"n23", country:"Bangladesh", title:"A Quantitative Assessment of Natural and Anthropogenic Effects on the Occurrence of High Air Pollution Loading in Dhaka and Neighboring Cities and Health Consequences", author:"Riaz Hossain Khan, Zahidul Quayyum, Shahanaj Rahman", year:2023, url:"" },
+  { id:"n24", country:"Bangladesh", title:"Link Between Gender Inequality and Women's Satisfaction with Maternal Healthcare Services: A Cross-Sectional Study in Khulna, Bangladesh", author:"Lekhok tothyo nei", year:2024, url:"" }
+];
+
+/* ===== AUTH (demo only: real OTP er jonno backend lagbe) ===== */
+const $ = id => document.getElementById(id);
+let pendingEmail = "";
+let demoOtp = "";
+
+$("loginForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const name = $("name").value.trim();
+  if (!name) return;
+  const st = settingsStore();
+  st.name = name;
+  saveStore("ars_settings", st);
+  $("welcome").textContent = T("Swagotom,") + " " + name;
+  $("login").classList.add("hidden");
+  $("app").classList.remove("hidden");
+  init();
+});
+
+$("logoutBtn").addEventListener("click", () => location.reload());
+
+/* ===== THEME ===== */
+$("themeBtn").addEventListener("click", () => {
+  const root = document.documentElement;
+  const isLight = root.getAttribute("data-theme") === "light";
+  root.setAttribute("data-theme", isLight ? "dark" : "light");
+});
+
+/* ===== SAVED (browser e rakha hoy) ===== */
+let saved = new Set();
+try { saved = new Set(JSON.parse(localStorage.getItem("ars_saved") || "[]")); } catch (e) {}
+function persistSaved() {
+  try { localStorage.setItem("ars_saved", JSON.stringify([...saved])); } catch (e) {}
+}
+
+/* ===== STATE ===== */
+let currentCountry = null;
+let custom = [];
+try { custom = JSON.parse(localStorage.getItem("ars_custom") || "[]"); } catch (e) {}
+let uiReady = false;
+const compare = new Set();
+let currentReaderId = null;
+
+/* ===== LANGUAGE (sidebar 🌐) =====
+   Key = screen e ja lekha ache (Banglish). Value = onno bhasha onubad. */
+const I18N = {
+  "Help": { bn: "সাহায্য", en: "Help", hi: "सहायता" },
+  "Setting": { bn: "সেটিংস", en: "Settings", hi: "सेटिंग्स" },
+  "Logout": { bn: "লগআউট", en: "Logout", hi: "लॉगआउट" },
+  "Theme": { bn: "থিম", en: "Theme", hi: "थीम" },
+  "Tulona koro": { bn: "তুলনা করুন", en: "Compare", hi: "तुलना करें" },
+  "+ Notun paper": { bn: "+ নতুন পেপার", en: "+ New paper", hi: "+ नया पेपर" },
+  "Dhuko": { bn: "প্রবেশ করুন", en: "Enter", hi: "प्रवेश करें" },
+  "Apnar naam likhe dhukun": { bn: "আপনার নাম লিখে প্রবেশ করুন", en: "Enter your name to continue", hi: "आगे बढ़ने के लिए अपना नाम लिखें" },
+  "Apnar naam": { bn: "আপনার নাম", en: "Your name", hi: "आपका नाम" },
+  "Paper er naam ba lekhok diye khujun": { bn: "পেপারের নাম বা লেখক দিয়ে খুঁজুন", en: "Search by paper title or author", hi: "पेपर के नाम या लेखक से खोजें" },
+  "Prosno likhun (jemon: paper kivabe save korbo)": { bn: "প্রশ্ন লিখুন", en: "Type your question", hi: "अपना प्रश्न लिखें" },
+  "Sob bochor": { bn: "সব বছর", en: "All years", hi: "सभी वर्ष" },
+  "Sob paper": { bn: "সব পেপার", en: "All papers", hi: "सभी पेपर" },
+  "Shudhu saved": { bn: "শুধু সেভ করা", en: "Saved only", hi: "केवल सेव किए गए" },
+  "Notun age": { bn: "নতুন আগে", en: "Newest first", hi: "नए पहले" },
+  "Purono age": { bn: "পুরনো আগে", en: "Oldest first", hi: "पुराने पहले" },
+  "Naam onujayi": { bn: "নাম অনুযায়ী", en: "By name", hi: "नाम के अनुसार" },
+  "Porhun": { bn: "পড়ুন", en: "Read", hi: "पढ़ें" },
+  "Save": { bn: "সেভ", en: "Save", hi: "सेव" },
+  "Saved ✓": { bn: "সেভ হয়েছে ✓", en: "Saved ✓", hi: "सेव हुआ ✓" },
+  "Download": { bn: "ডাউনলোড", en: "Download", hi: "डाउनलोड" },
+  "Tulona": { bn: "তুলনা", en: "Compare", hi: "तुलना" },
+  "Bondho": { bn: "বন্ধ", en: "Close", hi: "बंद करें" },
+  "Notun tab e khulun": { bn: "নতুন ট্যাবে খুলুন", en: "Open in new tab", hi: "नए टैब में खोलें" },
+  "Batil": { bn: "বাতিল", en: "Cancel", hi: "रद्द करें" },
+  "Crop kore save": { bn: "ক্রপ করে সেভ করুন", en: "Crop & save", hi: "क्रॉप करके सेव करें" },
+  "Save koro": { bn: "সেভ করুন", en: "Save", hi: "सेव करें" },
+  "Chhobi muchhun": { bn: "ছবি মুছুন", en: "Remove image", hi: "छवि हटाएं" },
+  "Note save": { bn: "নোট সেভ করুন", en: "Save note", hi: "नोट सेव करें" },
+  "Naam reset": { bn: "নাম রিসেট", en: "Reset name", hi: "नाम रीसेट" },
+  "Rong reset": { bn: "রং রিসেট", en: "Reset colour", hi: "रंग रीसेट" },
+  "Default e pheraa": { bn: "ডিফল্টে ফিরুন", en: "Back to default", hi: "डिफ़ॉल्ट पर लौटें" },
+  "+ Notun wallpaper": { bn: "+ নতুন ওয়ালপেপার", en: "+ New wallpaper", hi: "+ नया वॉलपेपर" },
+  "Sob setting reset": { bn: "সব সেটিংস রিসেট", en: "Reset all settings", hi: "सभी सेटिंग रीसेट" },
+  "Pathan": { bn: "পাঠান", en: "Send", hi: "भेजें" },
+  "Kono paper paoa jay nai.": { bn: "কোনো পেপার পাওয়া যায়নি।", en: "No papers found.", hi: "कोई पेपर नहीं मिला।" },
+  "⋮ theke desh select korun.": { bn: "⋮ থেকে দেশ বাছাই করুন।", en: "Select a country from ⋮", hi: "⋮ से देश चुनें।" },
+  "Paper tulona": { bn: "পেপার তুলনা", en: "Paper comparison", hi: "पेपर तुलना" },
+  "Notun paper add koro": { bn: "নতুন পেপার যোগ করুন", en: "Add new paper", hi: "नया पेपर जोड़ें" },
+  "Help assistant": { bn: "হেল্প সহকারী", en: "Help assistant", hi: "हेल्प सहायक" },
+  "Chhobi crop korun": { bn: "ছবি ক্রপ করুন", en: "Crop image", hi: "छवि क्रॉप करें" },
+  "Wallpaper (click kore pick korun)": { bn: "ওয়ালপেপার (ক্লিক করে বাছুন)", en: "Wallpaper (click to pick)", hi: "वॉलपेपर (चुनने के लिए क्लिक करें)" },
+  "Rong (accent colour)": { bn: "রং (অ্যাকসেন্ট)", en: "Colour (accent)", hi: "रंग (एक्सेंट)" },
+  "Naam": { bn: "নাম", en: "Name", hi: "नाम" },
+  "Note": { bn: "নোট", en: "Note", hi: "नोट" },
+  "Chhobi (card e dekhabe)": { bn: "ছবি (কার্ডে দেখাবে)", en: "Image (shown on card)", hi: "छवि (कार्ड पर दिखेगी)" },
+  "Aakar (ratio)": { bn: "আকার (রেশিও)", en: "Ratio", hi: "अनुपात" },
+  "Zoom": { bn: "জুম", en: "Zoom", hi: "ज़ूम" },
+  "মোট পেপার": { bn: "মোট পেপার", en: "Total papers", hi: "कुल पेपर" },
+  "বাংলাদেশ": { bn: "বাংলাদেশ", en: "Bangladesh", hi: "बांग्लादेश" },
+  "আন্তর্জাতিক": { bn: "আন্তর্জাতিক", en: "International", hi: "अंतरराष्ट्रीय" },
+  "মোট লেখক (আনুমানিক)": { bn: "মোট লেখক (আনুমানিক)", en: "Authors (approx.)", hi: "लेखक (अनुमानित)" },
+  "Favorite (saved)": { bn: "ফেভারিট (সেভ)", en: "Favourites (saved)", hi: "पसंदीदा (सेव)" },
+  "সম্প্রতি দেখা": { bn: "সম্প্রতি দেখা", en: "Recently viewed", hi: "हाल में देखे गए" },
+  "লেখক:": { bn: "লেখক:", en: "Author:", hi: "लेखक:" },
+  "বছর:": { bn: "বছর:", en: "Year:", hi: "वर्ष:" },
+  "দেশ:": { bn: "দেশ:", en: "Country:", hi: "देश:" },
+  "Abstract:": { bn: "সারাংশ:", en: "Abstract:", hi: "सार:" },
+  "Methodology:": { bn: "পদ্ধতি:", en: "Methodology:", hi: "कार्यप्रणाली:" },
+  "DOI:": { bn: "DOI:", en: "DOI:", hi: "DOI:" },
+  "তথ্য নেই": { bn: "তথ্য নেই", en: "No information", hi: "जानकारी नहीं है" },
+  "Tothyo": { bn: "তথ্য", en: "Field", hi: "विवरण" },
+  "লেখক": { bn: "লেখক", en: "Author", hi: "लेखक" },
+  "বছর": { bn: "বছর", en: "Year", hi: "वर्ष" },
+  "দেশ": { bn: "দেশ", en: "Country", hi: "देश" },
+  "Abstract": { bn: "সারাংশ", en: "Abstract", hi: "सार" },
+  "Methodology": { bn: "পদ্ধতি", en: "Methodology", hi: "कार्यप्रणाली" },
+  "Dataset": { bn: "ডেটাসেট", en: "Dataset", hi: "डेटासेट" },
+  "Findings": { bn: "ফলাফল", en: "Findings", hi: "निष्कर्ष" },
+  "DOI": { bn: "DOI", en: "DOI", hi: "DOI" },
+  "Paper er naam": { bn: "পেপারের নাম", en: "Paper title", hi: "पेपर का नाम" },
+  "Lekhok": { bn: "লেখক", en: "Author", hi: "लेखक" },
+  "Bochor (jemon 2024)": { bn: "বছর (যেমন 2024)", en: "Year (e.g. 2024)", hi: "वर्ष (जैसे 2024)" },
+  "Desh (jemon Bangladesh)": { bn: "দেশ (যেমন বাংলাদেশ)", en: "Country (e.g. Bangladesh)", hi: "देश (जैसे बांग्लादेश)" },
+  "PDF ba article link (optional)": { bn: "PDF বা আর্টিকেল লিংক (ঐচ্ছিক)", en: "PDF or article link (optional)", hi: "PDF या लेख का लिंक (वैकल्पिक)" },
+  "Chhobi te mouse diye tana (drag) korun ar zoom diye boro/choto korun.": { bn: "ছবিতে মাউস দিয়ে টেনে সরান এবং জুম দিয়ে বড়/ছোট করুন।", en: "Drag the image with the mouse and use zoom to resize.", hi: "माउस से छवि खींचें और ज़ूम से आकार बदलें।" },
+  "16:9 (desktop)": { bn: "১৬:৯ (ডেস্কটপ)", en: "16:9 (desktop)", hi: "16:9 (डेस्कटॉप)" },
+  "4:3": { bn: "৪:৩", en: "4:3", hi: "4:3" },
+  "1:1 (square)": { bn: "১:১ (বর্গ)", en: "1:1 (square)", hi: "1:1 (वर्गाकार)" },
+  "9:16 (phone)": { bn: "৯:১৬ (ফোন)", en: "9:16 (phone)", hi: "9:16 (फ़ोन)" },
+  "Default": { bn: "ডিফল্ট", en: "Default", hi: "डिफ़ॉल्ट" },
+  "Sunset": { bn: "সূর্যাস্ত", en: "Sunset", hi: "सूर्यास्त" },
+  "Forest": { bn: "বন", en: "Forest", hi: "जंगल" },
+  "Ocean": { bn: "সমুদ্র", en: "Ocean", hi: "महासागर" },
+  "Night": { bn: "রাত", en: "Night", hi: "रात" },
+  "Rose": { bn: "গোলাপ", en: "Rose", hi: "गुलाब" },
+  "Sky": { bn: "আকাশ", en: "Sky", hi: "आकाश" },
+  "Mint": { bn: "পুদিনা", en: "Mint", hi: "पुदीना" },
+  "Custom": { bn: "নিজের", en: "Custom", hi: "कस्टम" },
+  "Swagotom,": { bn: "স্বাগতম,", en: "Welcome,", hi: "स्वागत है," },
+  "Chhobi save hoyeche": { bn: "ছবি সেভ হয়েছে", en: "Image saved", hi: "छवि सेव हुई" },
+  "Chhobi muchha hoyeche": { bn: "ছবি মুছে ফেলা হয়েছে", en: "Image removed", hi: "छवि हटाई गई" },
+  "Note save hoyeche": { bn: "নোট সেভ হয়েছে", en: "Note saved", hi: "नोट सेव हुआ" },
+  "Paper ekhane na dekhale (kichu publisher site embed block kore) upore 'Notun tab e khulun' e click korun. Download ei reader theke hoy na.": { bn: "পেপার এখানে না দেখালে (কিছু প্রকাশক সাইট এমবেড বন্ধ রাখে) উপরে 'নতুন ট্যাবে খুলুন'-এ ক্লিক করুন। ডাউনলোড এই রিডার থেকে হয় না।", en: "If the paper does not show here (some publisher sites block embedding), click 'Open in new tab' above. Downloads are not done from this reader.", hi: "यदि पेपर यहां न दिखे (कुछ प्रकाशक साइटें एम्बेड रोकती हैं), तो ऊपर 'नए टैब में खोलें' दबाएं। डाउनलोड इस रीडर से नहीं होता।" },
+  "Ei paper er link nei. Link add korle ekhane porha jabe.": { bn: "এই পেপারের লিংক নেই। লিংক যোগ করলে এখানে পড়া যাবে।", en: "This paper has no link. Add a link to read it here.", hi: "इस पेपर का लिंक नहीं है। लिंक जोड़ने पर यहां पढ़ा जा सकेगा।" },
+  "Storage bhore geche. Chhobi choto korun ba purono data muchhun.": { bn: "স্টোরেজ ভরে গেছে। ছবি ছোট করুন বা পুরনো ডেটা মুছুন।", en: "Storage is full. Make the image smaller or delete old data.", hi: "स्टोरेज भर गया है। छवि छोटी करें या पुराना डेटा हटाएं।" },
+  "Ekshathe 3 ta paper ta tulona kora jabe.": { bn: "একসাথে ৩টির বেশি পেপার তুলনা করা যাবে না।", en: "You can compare up to 3 papers at a time.", hi: "एक बार में अधिकतम 3 पेपर की तुलना कर सकते हैं।" },
+  "Tulona korar jonno antot 2 ta paper select korun.": { bn: "তুলনার জন্য অন্তত ২টি পেপার বাছুন।", en: "Select at least 2 papers to compare.", hi: "तुलना के लिए कम से कम 2 पेपर चुनें।" },
+  "Paper save kivabe?": { bn: "পেপার কীভাবে সেভ করব?", en: "How do I save a paper?", hi: "पेपर कैसे सेव करूं?" },
+  "Desh kivabe dekhbo?": { bn: "দেশ কীভাবে দেখব?", en: "How do I view a country?", hi: "देश कैसे देखूं?" },
+  "Wallpaper kivabe change korbo?": { bn: "ওয়ালপেপার কীভাবে বদলাব?", en: "How do I change the wallpaper?", hi: "वॉलपेपर कैसे बदलूं?" },
+  "Notun paper kivabe add korbo?": { bn: "নতুন পেপার কীভাবে যোগ করব?", en: "How do I add a new paper?", hi: "नया पेपर कैसे जोड़ूं?" },
+  "Tulona kivabe korbo?": { bn: "তুলনা কীভাবে করব?", en: "How do I compare papers?", hi: "तुलना कैसे करूं?" },
+  "Data kothay save hoy?": { bn: "ডেটা কোথায় সেভ হয়?", en: "Where is my data saved?", hi: "मेरा डेटा कहां सेव होता है?" },
+  "Setting": { bn: "সেটিংস", en: "Settings", hi: "सेटिंग्स" }
+};
+
+let currentLang = localStorage.getItem("ars_lang") || "banglish";
+const ORIG_TEXT = new WeakMap();
+const ORIG_PH = new WeakMap();
+
+function translateUI() {
+  const lang = currentLang;
+  document.documentElement.lang = lang === "bn" ? "bn" : (lang === "hi" ? "hi" : "en");
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  let node;
+  while ((node = walker.nextNode())) {
+    const parent = node.parentNode;
+    if (!parent || parent.nodeName === "SCRIPT" || parent.nodeName === "STYLE") continue;
+    if (!ORIG_TEXT.has(node)) ORIG_TEXT.set(node, node.nodeValue);
+    const orig = ORIG_TEXT.get(node);
+    const key = orig.trim();
+    const entry = I18N[key];
+    if (!key || !entry || lang === "banglish") {
+      node.nodeValue = orig;
+    } else {
+      node.nodeValue = orig.replace(key, entry[lang] || entry.en || key);
+    }
+  }
+  document.querySelectorAll("input[placeholder], textarea[placeholder]").forEach(el => {
+    if (!ORIG_PH.has(el)) ORIG_PH.set(el, el.placeholder);
+    const orig = ORIG_PH.get(el);
+    const entry = I18N[orig];
+    el.placeholder = (!entry || lang === "banglish") ? orig : (entry[lang] || entry.en || orig);
+  });
+}
+
+/* Ekta text er translation (alert ityadi er jonno) */
+function T(text) {
+  const e = I18N[text];
+  if (!e || currentLang === "banglish") return text;
+  return e[currentLang] || e.en || text;
+}
+
+function setLanguage(lang) {
+  currentLang = lang;
+  try { localStorage.setItem("ars_lang", lang); } catch (e) {}
+  document.querySelectorAll("#langPanel button").forEach(b => b.classList.toggle("active", b.dataset.lang === lang));
+  document.querySelectorAll("[data-lang-line]").forEach(p => {
+    p.classList.toggle("hidden", lang !== "banglish" && p.dataset.langLine !== lang);
+  });
+  translateUI();
+}
+
+$("globeBtn").addEventListener("click", e => {
+  e.stopPropagation();
+  $("langPanel").classList.toggle("hidden");
+});
+document.addEventListener("click", e => {
+  if (!e.target.closest("#langPanel") && !e.target.closest("#globeBtn")) $("langPanel").classList.add("hidden");
+});
+$("langPanel").addEventListener("click", e => {
+  const b = e.target.closest("button[data-lang]");
+  if (!b) return;
+  setLanguage(b.dataset.lang);
+  $("langPanel").classList.add("hidden");
+});
+
+applySettings();
+setLanguage(currentLang);
+function allPapers() { return [...PAPERS, ...custom]; }
+
+/* ===== EXTRA DETAILS: paper id onujayi abstract/methodology/dataset/findings ekhane boshan =====
+   Example: p1: { abstract: "...", methodology: "...", dataset: "...", findings: "..." }
+   DOI na dileo, link theke (10.xxxx/... pattern) automatic ber hobe */
+const DETAILS = {
+  p1: {
+    doi: "10.1038/s41598-020-79148-7",
+    abstract: "This study proposes a novel deep learning framework for predicting environmental and climate-related data across spatial and temporal dimensions. Traditional statistical approaches often struggle to capture complex nonlinear relationships in environmental datasets. The proposed framework decomposes spatiotemporal processes into temporally referenced basis functions and stochastic spatial coefficients. These components allow the reconstruction of continuous environmental fields from irregularly distributed observations. The framework is evaluated using simulated and real-world datasets. The results demonstrate its potential for modeling complex environmental patterns and improving spatiotemporal prediction.",
+    methodology: "Computational and experimental research; deep learning-based spatiotemporal modeling; decomposition into temporal basis functions and spatial coefficients; comparison of reconstructed and observed environmental patterns",
+    dataset: "Simulated and real-world environmental data (irregularly distributed observations)"
+  },
+  p2: {
+    doi: "10.1103/PhysRevE.109.044202",
+    abstract: "This research introduces a data-driven framework for understanding climate variability through dimensionality reduction and causal inference. High-dimensional climate datasets contain complex relationships that make interpretation difficult. The proposed methodology reduces these datasets into a smaller number of regionally constrained patterns. Causal relationships between these patterns are then identified using the fluctuation-response formalism. The framework also introduces an analytical null model to distinguish genuine causal responses from spurious relationships. The methodology is demonstrated using sea surface temperature data from a climate model.",
+    methodology: "Quantitative computational research; regionally constrained pattern extraction; fluctuation-response formalism for causal analysis; analytical null model; confidence-level-based uncertainty estimation",
+    dataset: "Sea surface temperature fields from a state-of-the-art climate model"
+  },
+  p3: {
+    doi: "10.1038/s41467-024-55240-8",
+    abstract: "This research examines the challenges associated with machine learning-based geospatial modeling in environmental science. Geospatial datasets often contain spatial autocorrelation, imbalanced observations, measurement errors, and uncertainty. These characteristics can negatively affect model accuracy and generalization. The study presents a practical modeling pipeline that addresses important challenges in environmental data processing and machine learning. It discusses approaches for handling spatial dependencies, prediction errors, and uncertainty estimation. The research provides recommendations for improving the reliability of data-driven geospatial models.",
+    methodology: "Review-based research; critical review and methodological analysis; comparative review of geospatial modeling techniques; general geospatial modeling pipeline",
+    dataset: "Environmental and geospatial data (review-based, no single dataset)"
+  },
+  p5: {
+    doi: "10.1007/s00704-023-04725-5",
+    abstract: "This research evaluates different statistical and machine learning methods for spatial interpolation of climate variables. The study focuses on annual precipitation and minimum and maximum temperatures in the Pyrenees mountain region. Multiple Linear Regression and Generalized Additive Models are compared with five machine learning algorithms. The results indicate that machine learning approaches generally outperform traditional linear and additive models. Random Forest performs particularly well for precipitation prediction, while Stochastic Gradient Boosting achieves strong performance for maximum temperature interpolation.",
+    methodology: "Comparative quantitative research; MLR and GAM compared with KNN, SVM, Neural Networks, Stochastic Gradient Boosting and Random Forest; evaluated with R², MAE and RMSE",
+    dataset: "Climate variables (annual precipitation, minimum and maximum temperature) in the Pyrenees region"
+  },
+  p6: {
+    doi: "10.1007/s10994-025-06875-1",
+    abstract: "This research proposes a method called SPALT for forecasting measurements collected from geographically distributed sensors. The study addresses the problem of spatial autocorrelation, where observations from nearby locations may be interdependent. The proposed method uses linear model trees to identify time series with similar temporal trends and incorporate spatial information locally. A new pruning strategy is also introduced to improve model simplification. The approach supports simultaneous multi-step forecasting across multiple sensors. Experiments on three real-world datasets demonstrate its effectiveness in renewable energy production forecasting.",
+    methodology: "Experimental machine learning research; SPALT (linear model trees); local spatial autocorrelation; similarity-based time-series grouping; reduced error pruning; multi-step forecasting compared with tree-based models and neural networks",
+    dataset: "Three real-world datasets from sensors at renewable energy plants"
+  },
+  p7: {
+    doi: "10.1007/s13253-019-00352-8",
+    abstract: "This research proposes a multivariate stochastic generator for simulating global climate ensembles. Climate models generate large datasets that require significant computational resources and storage. The study introduces a statistical approach capable of generating multiple climate variables jointly using a relatively small training ensemble. The proposed model uses a multistage spectral approach to capture global spatial and temporal dependencies. It is designed to simulate more climate ensemble members while reducing computational requirements. The model is demonstrated using five training ensemble members and evaluated against ensemble members excluded from training.",
+    methodology: "Statistical modeling and computational research; multistage spectral method; parallel processing; evaluation against unused ensemble members",
+    dataset: "Global climate simulation data: three variables, five training ensemble members (over 80 million data points)"
+  },
+  p8: {
+    doi: "10.1007/s10666-023-09943-9",
+    abstract: "This research compares three approaches for mapping urban air temperature at high spatial and temporal resolutions. The study evaluates Ordinary Kriging, satellite-based machine learning, and the Weather Research and Forecasting model. It uses crowdsourced weather station observations and Earth observation predictors to estimate daily air temperature in Warsaw, Poland. The results show that the machine learning approach provides better predictive performance than the other two methods in the investigated case study. The findings demonstrate the potential of machine learning for urban heat monitoring and climate-related decision-making.",
+    methodology: "Comparative quantitative research; Ordinary Kriging, satellite-based machine learning (XGBoost) and WRF compared; evaluated with RMSE and R²; approximately 1 km spatial resolution; June–September 2021",
+    dataset: "Netatmo crowdsourced weather stations, five reference meteorological stations, Earth observation predictors (Warsaw, Poland)"
+  },
+  p9: {
+    doi: "10.1093/jrsssc/qlae076",
+    abstract: "This study introduces a spatiotemporal statistical model designed to capture changing spatial correlation structures over time. Traditional spatial models often assume that spatial relationships remain stationary, which may not accurately represent dynamic environmental processes. The proposed framework uses dynamic deformation to allow spatial correlation patterns to evolve over time. State-space models are employed to describe the temporal evolution of spatial deformation. The approach is motivated by monthly average temperature data from southern Brazil and provides a framework for modeling nonstationary spatiotemporal covariance structures.",
+    methodology: "Statistical modeling; dynamic spatial deformation model; state-space modeling; nonstationary covariance structures",
+    dataset: "Monthly average temperature data, southern Brazil"
+  },
+  q52: {
+    abstract: "This study investigates the role of microfinance in women's empowerment in Bangladesh. It examines whether microfinance programs improve women's economic, social, and political empowerment. The findings suggest that microfinance does not automatically create economic and political empowerment, but it can improve women's participation in household decision-making.",
+    methodology: "Qualitative case study; field interviews; focus group discussions and participant observation; analysed with Kabeer's Women's Empowerment Framework",
+    dataset: "20 female microfinance borrowers and their male family members",
+    findings: "Microfinance does not automatically create economic and political empowerment, but can improve women's participation in household decision-making"
+  },
+  n1: {
+    abstract: "This research investigates higher secondary students' perceptions of online education during the COVID-19 pandemic in Bangladesh. It explores the difficulties students faced, the effectiveness of online learning, and the factors influencing their motivation.",
+    methodology: "Quantitative research; online survey questionnaire; multistage random sampling; statistical analysis of responses",
+    dataset: "1,078 students"
+  },
+  q47: {
+    abstract: "This research compares online and offline learning methods among engineering students in Bangladesh. It evaluates eight important factors, including cost, flexibility, learning effectiveness, interaction, concentration, learning pace, technological challenges, and practicality.",
+    methodology: "Quantitative and decision analysis; Analytic Hierarchy Process (AHP); eight learning criteria; comparison of online versus offline education; relative importance and prioritisation of criteria"
+  },
+  q46: {
+    abstract: "This study examines the challenges and opportunities of online education in Bangladesh. It investigates the experiences of teachers and students and identifies problems related to technology, communication, learning effectiveness, and online teaching environments.",
+    methodology: "Mixed-methods research; numerical responses and participants' experiences; purposive sampling; statistical analysis and six-phase thematic analysis"
+  },
+  q57: {
+    abstract: "This study examines food insecurity in Bangladesh using household socioeconomic information. It focuses on the relationship between household economic conditions and food insecurity. It uses the Food Insecurity Experience Scale to understand the severity of food insecurity.",
+    methodology: "Quantitative research; Food Insecurity Experience Scale (FIES); Rasch model; classification of household food security and analysis of socioeconomic factors",
+    dataset: "Household Income and Expenditure Survey 2022"
+  },
+  q67: {
+    abstract: "This study examines the relationship between agricultural production, household food security, and dietary diversity among rural farming households in Bangladesh. It uses dietary diversity and food insecurity indicators to understand the food security conditions of small-scale farmers.",
+    methodology: "Quantitative household survey; Dietary Diversity Score (DDS); Household Food Insecurity Access Scale (HFIAS); household food security and dietary diversity assessment",
+    dataset: "399 households"
+  },
+  n2: {
+    abstract: "This study investigates the effectiveness of online learning platforms in improving educational opportunities for girls in Bangladesh. It explores participants' experiences and challenges and considers the contribution of online learning to educational inclusion.",
+    methodology: "Qualitative research; purposive sampling; in-depth interviews; thematic analysis",
+    dataset: "43 girls aged 20–26 years"
+  },
+  n3: {
+    abstract: "This paper examines the development of big data research and its applications. It reviews existing academic publications and organizes research into different categories, including data collection, storage, processing, transportation, and analysis.",
+    methodology: "Literature review using Science Citation Index and Social Science Citation Index; classification into 20 research categories; publications from 2011–2015",
+    dataset: "186 journal publications"
+  },
+  n4: {
+    abstract: "This study reviews 15 years of Big Data research. It investigates major application areas, research challenges, limitations, and emerging trends in Big Data analytics.",
+    methodology: "Systematic literature review; databases: Scopus, IEEE Xplore, ACM Digital Library, SpringerLink and Google Scholar; comparative literature analysis and thematic classification",
+    dataset: "189 initial studies, 32 review studies identified"
+  },
+  n5: {
+    abstract: "This research reviews the characteristics, tools, and techniques of Big Data Analytics. It examines challenges associated with large-scale data, including scalability, data inconsistency, real-time processing, and analytical techniques in Machine Learning and IoT environments.",
+    methodology: "Survey-based literature review; comparative examination of tools, techniques, and challenges; focus on Big Data characteristics and analytical frameworks"
+  },
+  q81: {
+    abstract: "This study investigates the technical and economic feasibility of combining solar and wind energy in the coastal areas of Chittagong, Bangladesh. It focuses on developing a hybrid renewable energy system to meet electricity demand while reducing energy generation costs. The study considers both standalone and grid-connected configurations.",
+    methodology: "Quantitative simulation-based research; study location Patenga, Chittagong; HOMER software; system simulation and optimisation; NPC and COE evaluation; sensitivity analysis",
+    dataset: "Solar radiation, wind speed, and electricity load data"
+  },
+  n6: {
+    abstract: "This study introduces a rapid consumption survey methodology for measuring household poverty in Bangladesh. Traditional household consumption surveys require extensive information about food and non-food expenditures. This study explores how a shorter questionnaire can reduce survey time and administrative costs while maintaining reliable poverty estimates.",
+    methodology: "Quantitative research; multiple imputation with chained equations; comparison with OLS and median imputation",
+    dataset: "Bangladesh Integrated Household Survey (BIHS), two-round panel data"
+  },
+  n7: {
+    abstract: "This study investigates the factors influencing access to water, sanitation, and hygiene (WASH) facilities in Bangladesh. It uses national demographic and health survey data to identify inequalities and barriers affecting household access to essential facilities. The study applies statistical modeling to account for geographical clustering and differences between households.",
+    methodology: "Quantitative research on secondary data; Generalized Linear Mixed Model (GLMM) compared with logistic regression; evaluated with AIC and likelihood ratio test",
+    dataset: "Bangladesh Demographic and Health Survey (BDHS) 2022"
+  },
+  n8: {
+    abstract: "This research investigates the feasibility of renewable energy systems in a residential area of Pabna, Bangladesh. The study combines solar photovoltaic systems, biomass generators, and wind energy to develop an efficient hybrid microgrid. It evaluates the economic and technical performance of different energy configurations.",
+    methodology: "Quantitative simulation-based research; HOMER Pro v3.14.2; technical and economic analysis; NPC, COE, and operating cost evaluation",
+    dataset: "Study location: Pabna, Bangladesh"
+  },
+  n9: {
+    abstract: "This study proposes an off-grid hybrid renewable energy system for Kuakata, Bangladesh. It combines solar photovoltaic, wind, and biomass energy to provide a reliable electricity supply. The research evaluates the performance of different dispatch strategies and examines system stability, reliability, and economic feasibility.",
+    methodology: "Simulation-based experimental research; HOMER software; hybrid energy system optimisation; LCOE, NPC, and voltage/frequency stability evaluation",
+    dataset: "Solar radiation, wind speed, and biomass resources (Kuakata, Bangladesh)"
+  },
+  n10: {
+    abstract: "This research evaluates the feasibility of hybrid photovoltaic, wind, and fuel cell systems for on-grid and off-grid applications in Bangladesh. It focuses on the Ashrayan-3 housing project and investigates sustainable energy solutions for remote communities. Different energy configurations are compared based on technical performance, investment costs, and environmental impacts.",
+    methodology: "Quantitative simulation-based research; HOMER software; technical and economic feasibility; system configuration optimisation; simulation and sensitivity analysis",
+    dataset: "Study location: Ashrayan-3, Bhasan Char, Bangladesh"
+  },
+  n11: {
+    abstract: "This study investigates the integration of renewable energy into the Dhaka-Mawa Expressway in Bangladesh. It proposes a hybrid energy system using bifacial solar photovoltaic panels and vertical-axis wind turbines. The research evaluates energy generation, economic performance, environmental benefits, and the reliability of the proposed system.",
+    methodology: "Quantitative simulation-based research; HOMER Pro and PVsyst software; techno-economic and environmental analysis; LCOE, NPC, IRR, ROI; sensitivity analysis",
+    dataset: "Study location: Dhaka-Mawa Expressway"
+  },
+  n12: {
+    abstract: "This study examines the challenges of analyzing large volumes of continuously generated data. It reviews different big data streaming tools, technologies, and analytical techniques. The research identifies important challenges such as scalability, privacy, load balancing, and real-time data processing.",
+    methodology: "Systematic literature review; databases: Scopus, ScienceDirect, EBSCO; inclusion and exclusion criteria; comparative review of tools and technologies",
+    dataset: "2,295 initial papers, 47 finally selected"
+  },
+  n13: {
+    abstract: "This research reviews the applications of Big Data Predictive Analytics across different industries. It investigates how statistical modeling, data mining, artificial intelligence, and machine learning techniques can identify patterns in historical data and predict future events. It also discusses the challenges and opportunities of predictive analytics in healthcare, agriculture, business, and smart cities.",
+    methodology: "Systematic literature review covering 2014–2023; inclusion and exclusion criteria; classification into seven application areas",
+    dataset: "1,130 initial articles, 109 finally selected"
+  },
+  n14: {
+    abstract: "This study investigates how artificial intelligence can improve cybersecurity systems. It examines the use of AI in detecting cyberattacks, identifying vulnerabilities, protecting digital systems, and responding to security threats. The research also identifies current challenges and future research opportunities in AI-based cybersecurity.",
+    methodology: "Systematic literature review; Scopus database; title, abstract, and full-text screening; thematic analysis; NIST Cybersecurity Framework classification",
+    dataset: "2,395 initial studies, 236 finally selected"
+  },
+  n15: {
+    abstract: "This research introduces BanglaRiceLeaf, a specialized dataset for detecting rice leaf diseases in Bangladesh using artificial intelligence and deep learning techniques. The study addresses the lack of high-quality agricultural image datasets collected under natural field conditions. It presents a collection of rice leaf images representing different diseases and healthy leaves. The dataset can support automated disease classification and precision agriculture research.",
+    methodology: "Experimental dataset development; expert-supervised manual annotation; Xception, NASNetMobile and InceptionV3 models; data collected July 2023 – July 2024",
+    dataset: "4,152 JPG images, 5 classes, rice varieties BR11 and BRRI dhan34 (BRRI, Gazipur)"
+  },
+  n16: {
+    abstract: "This study investigates the application of machine learning techniques for predicting Aman rice production in Bangladesh. It uses historical agricultural and meteorological data to understand the relationship between climate conditions and rice production. Different machine learning algorithms are compared to identify the most accurate prediction model. The study highlights the importance of rainfall, temperature, humidity, and other climatic variables in agricultural production.",
+    methodology: "Quantitative research; outlier correction and statistical imputation; Random Forest, Neural Network, Decision Tree, Linear Regression, Gradient Boosting compared using RMSE, R², MAE; Random Forest performed best",
+    dataset: "Historical data 1970–2022 from BMD and BBS, 35 weather stations"
+  },
+  n17: {
+    abstract: "This research proposes an automated plant disease detection system using the YOLOv8 object detection algorithm. It focuses on five major agricultural crops in Bangladesh: rice, corn, wheat, potato, and tomato. The study aims to identify crop leaf diseases accurately and efficiently through image processing and deep learning. The proposed system can help farmers detect plant diseases early and improve agricultural productivity.",
+    methodology: "Experimental machine learning research; YOLOv8; Roboflow annotation; preprocessing and augmentation; evaluated with mAP and F1 score; reported mAP 98% and F1 97%",
+    dataset: "2,850 images, 19 classes, 150 images per class (PlantVillage and selected crop images)"
+  },
+  n18: {
+    abstract: "This study presents a structured agricultural dataset designed to support smart precision agriculture in Bangladesh. It addresses the shortage of high-quality agricultural datasets representing local farming conditions. The dataset combines government agricultural statistics with information collected directly from farmers. It can be used for crop classification, agricultural forecasting, and intelligent irrigation systems.",
+    methodology: "Dataset development; combines BBS 2022 Yearbook with primary farmer surveys; missing value handling, targeted imputation, duplicate removal; cross-validated with official statistics",
+    dataset: "4,191 records, 73 crop types, 12 agronomic and environmental variables, 223 farmers across 10 districts"
+  },
+  n19: {
+    abstract: "This research investigates the knowledge, attitudes, and practices of Bangladeshi residents regarding COVID-19 prevention. It examines how people understand the disease, their attitudes toward preventive measures, and their daily practices to reduce infection risks. The research also explores differences in awareness and preventive behavior across different demographic groups.",
+    methodology: "Quantitative cross-sectional study; online KAP questionnaire via Google Forms; snowball sampling; SPSS with t-test, F-test, multiple logistic regression, odds ratio, 95% CI",
+    dataset: "932 participants"
+  },
+  n20: {
+    abstract: "This research investigates the effectiveness of Convolutional Neural Networks for identifying crop diseases and pest infestations. It compares traditional image processing methods with deep learning-based feature extraction techniques. The study focuses on rice, corn, and jute crops. It also introduces a graphical user interface to make automated crop disease detection more accessible to farmers and agricultural specialists.",
+    methodology: "Experimental research; LBP and CNN feature extraction across 18 architectures; ResNet-101, DarkNet-19, GoogleNet selected; SVM classification; 80/20 train-test split; accuracy, precision, sensitivity, specificity, F1 score",
+    dataset: "Rice, corn and jute leaf images"
+  },
+  n21: {
+    abstract: "This research introduces a multi-crop image dataset for automated plant disease detection in Bangladesh. It focuses on four agricultural crops: bottle gourd, zucchini, papaya, and tomato. The study addresses the shortage of locally collected agricultural image datasets. It provides expert-validated images that can be used to train and evaluate deep learning models for automated crop disease diagnosis.",
+    methodology: "Experimental dataset development; two-stage expert validation; augmentation by rotation, flipping, brightness adjustment, noise addition and sharpening; SONY ALPHA 7 II camera, 512 × 512 px, JPG",
+    dataset: "5,266 original images, 28,000 augmented images, 4 crops, 28 disease and healthy classes"
+  },
+  n22: {
+    abstract: "This study reviews the applications of machine learning and deep learning in healthcare using longitudinal multimodal clinical data. It investigates how artificial intelligence can support medical diagnosis, prediction, and classification by combining different types of medical information. It also examines challenges related to missing data, heterogeneous information, and model performance.",
+    methodology: "Systematic literature review following PRISMA guidelines; comparative literature analysis; focus on prediction, classification, multimodal data fusion and missing data handling; period 2020–2024",
+    dataset: "1,124 initial records, 54 final included items (53 studies, 1 dataset descriptor); sources: EHR and medical imaging"
+  },
+  n23: {
+    abstract: "This study examines the natural and human-related factors contributing to air pollution in Dhaka and neighboring cities of Bangladesh. It investigates the frequency of high pollution levels and their potential health consequences. The study uses air quality and meteorological data to understand pollution patterns and identify similarities between different urban areas.",
+    methodology: "Quantitative research on secondary data; cluster analysis; air pollution and health risk assessment; variables PM2.5, PM10, gaseous pollutants and meteorological variables",
+    dataset: "Department of Environment, Bangladesh; 2012–2019; Dhaka, Narayanganj, Gazipur and other major cities"
+  },
+  n24: {
+    abstract: "This study investigates the relationship between gender inequality and women's satisfaction with maternal healthcare services in Bangladesh. It focuses on the experiences of pregnant and recently delivered women in urban and peri-urban areas of Khulna. The research explores how socioeconomic conditions, gender-related factors, and healthcare accessibility influence women's satisfaction with maternal health services.",
+    methodology: "Cross-sectional study; in-person questionnaire survey; systematic random sampling; October–November 2022; statistical analysis of gender inequality and healthcare satisfaction",
+    dataset: "150 women (75 each from Khalishpur and Dighalia, Khulna)"
+  }
+};
+
+function getDetails(p) {
+  const d = DETAILS[p.id] || {};
+  const m = (p.url || "").match(/10\.\d{4,9}\/[^\s?#]+/);
+  return {
+    doi: d.doi || (m ? m[0] : ""),
+    abstract: d.abstract || "",
+    methodology: d.methodology || "",
+    dataset: d.dataset || "",
+    findings: d.findings || ""
+  };
+}
+
+function init() {
+  const countries = [...new Set(allPapers().map(p => p.country))];
+  const menu = $("countryMenu");
+  menu.innerHTML = countries.map(c =>
+    `<button type="button" data-c="${escapeHtml(c)}" class="${c === currentCountry ? "active" : ""}">${escapeHtml(c)}</button>`
+  ).join("");
+  menu.onclick = e => {
+    const b = e.target.closest("button[data-c]");
+    if (!b) return;
+    currentCountry = b.dataset.c;
+    menu.classList.add("hidden");
+    init();
+  };
+
+  if (!uiReady) {
+    uiReady = true;
+    $("menuBtn").addEventListener("click", e => { e.stopPropagation(); menu.classList.toggle("hidden"); });
+    document.addEventListener("click", e => { if (!e.target.closest(".menu-wrap")) menu.classList.add("hidden"); });
+
+    $("grid").addEventListener("click", e => {
+      const r = e.target.closest("[data-read]");
+      if (!r) return;
+      openReader(allPapers().find(p => p.id === r.dataset.read));
+    });
+
+    $("closeReader").addEventListener("click", closeReader);
+
+    $("grid").addEventListener("change", e => {
+      if (!e.target.matches("[data-compare]")) return;
+      const id = e.target.dataset.compare;
+      if (e.target.checked) {
+        if (compare.size >= 3) { e.target.checked = false; alert(T("Ekshathe 3 ta paper ta tulona kora jabe.")); return; }
+        compare.add(id);
+      } else {
+        compare.delete(id);
+      }
+    });
+    $("compareBtn").addEventListener("click", openCompare);
+
+    // Settings
+    $("settingsBtn").addEventListener("click", openSettings);
+    $("closeSettings").addEventListener("click", () => $("settingsModal").classList.add("hidden"));
+    $("wallGrid").addEventListener("click", e => {
+      const del = e.target.closest("[data-del]");
+      if (del) {
+        const s = settingsStore();
+        s.wallpapers = (s.wallpapers || []).filter(w => w.id !== del.dataset.del);
+        if (s.wallpaperId === del.dataset.del) s.wallpaperId = "default";
+        saveStore("ars_settings", s);
+        renderWallGrid();
+        applySettings();
+        return;
+      }
+      const pick = e.target.closest("[data-pick]");
+      if (pick) {
+        const s = settingsStore();
+        s.wallpaperId = pick.dataset.pick;
+        saveStore("ars_settings", s);
+        renderWallGrid();
+        applySettings();
+      }
+    });
+    $("addWallBtn").addEventListener("click", () => $("wallpaperFile").click());
+
+    // Crop
+    const cv = $("cropCanvas");
+    cv.addEventListener("pointerdown", e => {
+      cropDrag = { x: e.clientX, y: e.clientY, ox: cropOX, oy: cropOY };
+      cv.setPointerCapture(e.pointerId);
+    });
+    cv.addEventListener("pointermove", e => {
+      if (!cropDrag) return;
+      const r = cv.getBoundingClientRect();
+      const k = cv.width / r.width;
+      cropOX = cropDrag.ox + (e.clientX - cropDrag.x) * k;
+      cropOY = cropDrag.oy + (e.clientY - cropDrag.y) * k;
+      drawCrop();
+    });
+    const endDrag = () => { cropDrag = null; };
+    cv.addEventListener("pointerup", endDrag);
+    cv.addEventListener("pointercancel", endDrag);
+    $("cropRatio").addEventListener("change", drawCrop);
+    $("cropZoom").addEventListener("input", drawCrop);
+    $("cropCancel").addEventListener("click", () => {
+      cropImg = null;
+      $("cropModal").classList.add("hidden");
+    });
+    $("cropSave").addEventListener("click", saveCropped);
+
+    // Help
+    $("helpBtn").addEventListener("click", openHelp);
+    $("closeHelp").addEventListener("click", () => $("helpModal").classList.add("hidden"));
+    $("helpForm").addEventListener("submit", e => {
+      e.preventDefault();
+      sendHelp($("helpInput").value);
+      $("helpInput").value = "";
+    });
+    ["Paper save kivabe?", "Desh kivabe dekhbo?", "Wallpaper kivabe change korbo?", "Notun paper kivabe add korbo?", "Tulona kivabe korbo?", "Data kothay save hoy?"].forEach(q => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "btn";
+      b.style.fontSize = "0.8rem";
+      b.textContent = q;
+      b.addEventListener("click", () => sendHelp(b.textContent));
+      $("helpQuick").appendChild(b);
+    });
+    $("wallpaperFile").addEventListener("change", e => {
+      const f = e.target.files[0];
+      e.target.value = "";
+      if (!f) return;
+      loadImageFile(f, openCrop);
+    });
+    $("resetWallpaper").addEventListener("click", () => {
+      const s = settingsStore();
+      s.wallpaperId = "default";
+      saveStore("ars_settings", s);
+      renderWallGrid();
+      applySettings();
+    });
+    $("accentInput").addEventListener("input", e => {
+      const s = settingsStore();
+      s.accent = e.target.value;
+      saveStore("ars_settings", s);
+      applySettings();
+    });
+    $("resetAccent").addEventListener("click", () => {
+      const s = settingsStore();
+      delete s.accent;
+      saveStore("ars_settings", s);
+      $("accentInput").value = "#4f7cff";
+      applySettings();
+    });
+    $("settingsName").addEventListener("change", e => {
+      const s = settingsStore();
+      s.name = e.target.value.trim();
+      saveStore("ars_settings", s);
+      applySettings();
+    });
+    $("resetName").addEventListener("click", () => {
+      const s = settingsStore();
+      delete s.name;
+      saveStore("ars_settings", s);
+      location.reload();
+    });
+    $("resetAll").addEventListener("click", () => {
+      try { localStorage.removeItem("ars_settings"); } catch (e) {}
+      location.reload();
+    });
+
+    // Paper chhobi + note
+    $("paperImgFile").addEventListener("change", e => {
+      const f = e.target.files[0];
+      if (!f || !currentReaderId) return;
+      downscale(f, 400, data => {
+        const im = imagesStore();
+        im[currentReaderId] = data;
+        if (saveStore("ars_images", im)) { $("toolMsg").textContent = "Chhobi save hoyeche"; render(); }
+      });
+    });
+    $("paperImgRemove").addEventListener("click", () => {
+      if (!currentReaderId) return;
+      const im = imagesStore();
+      delete im[currentReaderId];
+      saveStore("ars_images", im);
+      $("toolMsg").textContent = "Chhobi muchha hoyeche";
+      render();
+    });
+    $("noteSave").addEventListener("click", () => {
+      if (!currentReaderId) return;
+      const n = notesStore();
+      n[currentReaderId] = $("noteText").value;
+      if (saveStore("ars_notes", n)) { $("toolMsg").textContent = "Note save hoyeche"; translateUI(); }
+    });
+    $("closeCompare").addEventListener("click", () => $("compareModal").classList.add("hidden"));
+    $("addBtn").addEventListener("click", () => $("addModal").classList.remove("hidden"));
+    $("closeAdd").addEventListener("click", () => $("addModal").classList.add("hidden"));
+    $("addForm").addEventListener("submit", e => {
+      e.preventDefault();
+      custom.push({
+        id: "c" + Date.now(),
+        title: $("aTitle").value.trim(),
+        author: $("aAuthor").value.trim(),
+        year: Number($("aYear").value),
+        country: $("aCountry").value.trim(),
+        url: $("aUrl").value.trim()
+      });
+      try { localStorage.setItem("ars_custom", JSON.stringify(custom)); } catch (err) {}
+      e.target.reset();
+      $("addModal").classList.add("hidden");
+      init();
+    });
+  }
+  render();
+}
+
+function updateStats() {
+  const all = allPapers();
+  const bd = all.filter(p => p.country === "Bangladesh").length;
+  const authors = new Set();
+  all.forEach(p => p.author.split(",").forEach(a => { const n = a.trim(); if (n) authors.add(n); }));
+  let recentCount = 0;
+  try { recentCount = JSON.parse(localStorage.getItem("ars_recent") || "[]").length; } catch (e) {}
+  const stats = [
+    ["মোট পেপার", all.length],
+    ["বাংলাদেশ", bd],
+    ["আন্তর্জাতিক", all.length - bd],
+    ["মোট লেখক (আনুমানিক)", authors.size],
+    ["Favorite (saved)", saved.size],
+    ["সম্প্রতি দেখা", recentCount]
+  ];
+  $("stats").innerHTML = stats.map(([label, val]) =>
+    `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;"><div style="font-size:1.4rem;font-weight:700;color:var(--accent);">${val}</div><div class="meta">${label}</div></div>`
+  ).join("");
+  const cur = $("yearSel").value;
+  const years = [...new Set(all.map(p => p.year))].sort((a, b) => b - a);
+  $("yearSel").innerHTML = '<option value="">Sob bochor</option>' + years.map(y => `<option value="${y}">${y}</option>`).join("");
+  $("yearSel").value = cur;
+}
+
+function openReader(p) {
+  if (!p) return;
+  $("readerTitle").textContent = p.title;
+  $("readerFrame").src = p.url || "about:blank";
+  $("readerOpen").href = p.url || "#";
+  $("readerOpen").classList.toggle("hidden", !p.url);
+  $("readerNote").textContent = p.url
+    ? "Paper ekhane na dekhale (kichu publisher site embed block kore) upore 'Notun tab e khulun' e click korun. Download ei reader theke hoy na."
+    : "Ei paper er link nei. Link add korle ekhane porha jabe.";
+  $("readerDetails").innerHTML =
+    `<b>লেখক:</b> ${escapeHtml(p.author)}<br>` +
+    `<b>বছর:</b> ${p.year}<br>` +
+    `<b>দেশ:</b> ${escapeHtml(p.country)}<br>` +
+    `<b>Abstract:</b> ${escapeHtml(getDetails(p).abstract) || "তথ্য নেই"}<br>` +
+    `<b>Methodology:</b> ${escapeHtml(getDetails(p).methodology) || "তথ্য নেই"}<br>` +
+    `<b>DOI:</b> ${escapeHtml(getDetails(p).doi) || "তথ্য নেই"}`;
+  let rec = [];
+  try { rec = JSON.parse(localStorage.getItem("ars_recent") || "[]"); } catch (e) {}
+  rec = [p.id, ...rec.filter(x => x !== p.id)].slice(0, 20);
+  try { localStorage.setItem("ars_recent", JSON.stringify(rec)); } catch (e) {}
+  currentReaderId = p.id;
+  $("noteText").value = notesStore()[p.id] || "";
+  $("toolMsg").textContent = "";
+  $("readerModal").classList.remove("hidden");
+  translateUI();
+}
+
+/* ===== STORAGE + SETTINGS HELPERS ===== */
+function loadStore(key) {
+  try { return JSON.parse(localStorage.getItem(key) || "{}"); } catch (e) { return {}; }
+}
+function saveStore(key, obj) {
+  try { localStorage.setItem(key, JSON.stringify(obj)); return true; }
+  catch (e) { alert(T("Storage bhore geche. Chhobi choto korun ba purono data muchhun.")); return false; }
+}
+function settingsStore() { return loadStore("ars_settings"); }
+function imagesStore() { return loadStore("ars_images"); }
+function notesStore() { return loadStore("ars_notes"); }
+
+function downscale(file, maxW, cb) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, maxW / img.width);
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * scale);
+      c.height = Math.round(img.height * scale);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      cb(c.toDataURL("image/jpeg", 0.8));
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function presetWalls() {
+  return [
+    { id: "default", name: "Default", css: "" },
+    { id: "sunset", name: "Sunset", css: "linear-gradient(135deg,#3b1f4a,#f0785a)" },
+    { id: "forest", name: "Forest", css: "linear-gradient(135deg,#0d2b1f,#2e7d5b)" },
+    { id: "ocean", name: "Ocean", css: "linear-gradient(135deg,#0a2a4a,#1e88e5)" },
+    { id: "night", name: "Night", css: "linear-gradient(135deg,#05070f,#1c2a5e)" },
+    { id: "rose", name: "Rose", css: "linear-gradient(135deg,#4a1d3d,#e46a8a)" },
+    { id: "sky", name: "Sky", css: "linear-gradient(135deg,#1e3c72,#2a7fba)" },
+    { id: "mint", name: "Mint", css: "linear-gradient(135deg,#0f3d3e,#4fd1c5)" }
+  ];
+}
+
+function allWalls() {
+  const s = settingsStore();
+  return [...presetWalls(), ...(s.wallpapers || []).map(w => ({ id: w.id, name: w.name, data: w.data }))];
+}
+
+function findWallpaper(id) {
+  return allWalls().find(w => w.id === id);
+}
+
+function renderWallGrid() {
+  const s = settingsStore();
+  const cur = s.wallpaperId || "default";
+  const customIds = new Set((s.wallpapers || []).map(w => w.id));
+  $("wallGrid").innerHTML = allWalls().map(w => {
+    const bg = w.data ? `url(${w.data}) center/cover` : (w.css || "var(--bg)");
+    const border = cur === w.id ? "var(--accent)" : "var(--border)";
+    const del = customIds.has(w.id)
+      ? `<button type="button" data-del="${w.id}" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;border:0;border-radius:50%;width:22px;height:22px;cursor:pointer;">×</button>`
+      : "";
+    return `<div style="position:relative;">
+      <button type="button" data-pick="${w.id}" title="${escapeHtml(w.name)}" style="width:100%;height:64px;border-radius:10px;border:2px solid ${border};background:${bg};cursor:pointer;"></button>
+      <div class="meta" style="text-align:center;font-size:0.75rem;margin-top:3px;">${escapeHtml(w.name)}</div>
+      ${del}
+    </div>`;
+  }).join("");
+}
+
+function applySettings() {
+  const s = settingsStore();
+  const b = document.body.style;
+  const wp = findWallpaper(s.wallpaperId || "default");
+  if (wp && wp.data) {
+    b.backgroundImage = `url(${wp.data})`;
+    b.backgroundSize = "cover";
+    b.backgroundAttachment = "fixed";
+  } else if (wp && wp.css) {
+    b.backgroundImage = wp.css;
+    b.backgroundSize = "";
+  } else {
+    b.backgroundImage = "";
+    b.backgroundSize = "";
+  }
+  const root = document.documentElement.style;
+  if (s.accent) {
+    root.setProperty("--accent", s.accent);
+    root.setProperty("--accent2", s.accent);
+  } else {
+    root.removeProperty("--accent");
+    root.removeProperty("--accent2");
+  }
+  if (s.name) $("welcome").textContent = T("Swagotom,") + " " + s.name;
+}
+
+/* ===== HELP ASSISTANT (rule-based, AI noy) ===== */
+const HELP_KB = [
+  { keys: ["login", "dhuk", "naam", "name"], a: "Login e shudhu apnar naam likhe 'Dhuko' click korun. Email ba OTP lagbe na." },
+  { keys: ["desh", "country", "menu", "⋮"], a: "Upore-baam e ⋮ button e click korle desh gulo dekhben. Desh select korle sei desher paper gulo dekha jabe." },
+  { keys: ["porhun", "read", "dekh", "khul", "open", "view"], a: "Paper card e 'Porhun' click korun. Paper ta modal e khulbe. Site ta na dekhale modal e upore 'Notun tab e khulun' click korun." },
+  { keys: ["download", "dawnload", "namao", "pdf"], a: "Paper card e 'Download' button e click korle PDF download hobe. Button disabled thakle bujhben oi paper er link nei." },
+  { keys: ["save", "favorite", "pochondo", "sonchoy", "rakh"], a: "Card e 'Save' click korle paper save hobe. Upore 'Shudhu saved' filter diye sheguli alada kore dekhun." },
+  { keys: ["tulona", "compare", "tulon"], a: "Card e 'Tulona' checkbox select korun (2-3 ta). Upore 'Tulona koro' click korle pashapashi table e dekhabe." },
+  { keys: ["notun paper", "add", "jog", "jukto", "submit", "upload"], a: "Upore '+ Notun paper' click korun. Naam, lekhok, bochor, desh likhe Save korun. Sheta apnar browser e save hobe." },
+  { keys: ["chhobi", "chobi", "image", "photo", "chhoto", "chhobi"], a: "Paper khule (Porhun) modal er 'Chhobi' theke file upload korun. Card e chhobi dekhabe. Muchhte 'Chhobi muchhun' click korun." },
+  { keys: ["note", "notes", "mantobbo", "lekh"], a: "Paper khule (Porhun) modal er niche Note lekhun, tarpor 'Note save' click korun." },
+  { keys: ["setting", "wallpaper", "walpaper", "background", "rong", "color", "colour", "theme"], a: "Upore 'Setting' click korun. Wallpaper gallery theke pick korun, '+ Notun wallpaper' diye nijer chhobi add korun. Colour picker diye accent rong bodlan." },
+  { keys: ["crop", "kroap", "ongsho", "aakar", "ratio"], a: "Notun wallpaper upload korle crop window ashbe. Aakar select korun, chhobi drag kore ongsho thik korun, zoom kore 'Crop kore save' click korun." },
+  { keys: ["reset", "muchh", "delete", "clear"], a: "Setting e 'Naam reset' click korle naam muchhe login screen abar ashbe. 'Sob setting reset' click korle wallpaper, rong, naam sob default e phirbe." },
+  { keys: ["dashboard", "statistic", "sonkha", "count", "stat", "hisab"], a: "Upore card gulo mot paper, Bangladesh ar international paper, lekhok, favorite, ar sampratik dekha paper er sonkha dekhay." },
+  { keys: ["search", "khoj", "bochor", "year", "filter", "lekhok", "author"], a: "Search box e paper er naam ba lekhok likhun. 'Sob bochor' dropdown diye nirdishto bochor select korte paren." },
+  { keys: ["abstract", "methodology", "doi", "dataset", "details", "tothyo"], a: "Abstract, methodology, dataset ar DOI Porhun modal ar Tulona table e dekhano hoy. Jekhane tothyo nei sekhane 'তথ্য নেই' lekha thake." },
+  { keys: ["data", "harie", "hariye", "save hoy na", "hoy na", "store"], a: "Notun paper, note, chhobi, setting sob apnar browser e save hoy. Onno computer ba browser e dekhbe na. Browser er data muchhle eguloo chole jabe." }
+];
+
+/* Uttor gulo UI er bhashay (index HELP_KB er sathe mil ache) */
+const HELP_T = [
+  { bn: "লগইনে শুধু আপনার নাম লিখে 'প্রবেশ করুন' ক্লিক করুন। ইমেইল বা OTP লাগবে না।", en: "On the login screen, just type your name and click 'Enter'. No email or OTP is needed.", hi: "लॉगिन स्क्रीन पर बस अपना नाम लिखें और 'प्रवेश करें' पर क्लिक करें। ईमेल या OTP की ज़रूरत नहीं है।" },
+  { bn: "উপরের বাঁ দিকের ⋮ বাটনে ক্লিক করলে দেশের তালিকা দেখবেন। দেশ বাছাই করলে সেই দেশের পেপার দেখা যাবে।", en: "Click the ⋮ button at the top left to see the country list. Pick a country to see its papers.", hi: "ऊपर बाएं ⋮ बटन पर क्लिक करें और देशों की सूची देखें। देश चुनने पर उसके पेपर दिखेंगे।" },
+  { bn: "পেপার কার্ডে 'পড়ুন' ক্লিক করুন। পেপারটি উইন্ডোতে খুলবে। সাইট না দেখালে উইন্ডোর উপরে 'নতুন ট্যাবে খুলুন' ক্লিক করুন।", en: "Click 'Read' on a paper card. It opens in a window. If the site does not show, click 'Open in new tab' at the top of that window.", hi: "पेपर कार्ड पर 'पढ़ें' क्लिक करें। पेपर एक विंडो में खुलेगा। साइट न दिखे तो उस विंडो के ऊपर 'नए टैब में खोलें' क्लिक करें।" },
+  { bn: "পেপার কার্ডে 'ডাউনলোড' বাটনে ক্লিক করলে PDF ডাউনলোড হবে। বাটন নিষ্ক্রিয় থাকলে বুঝবেন ওই পেপারের লিংক নেই।", en: "Click 'Download' on a paper card to get the PDF. If the button is disabled, that paper has no link.", hi: "पेपर कार्ड पर 'डाउनलोड' बटन दबाने पर PDF डाउनलोड होगा। बटन निष्क्रिय हो तो उस पेपर का लिंक नहीं है।" },
+  { bn: "কার্ডে 'Save' ক্লিক করলে পেপার সেভ হবে। উপরের 'শুধু সেভ করা' ফিল্টার দিয়ে সেগুলো আলাদা করে দেখুন।", en: "Click 'Save' on a card to save the paper. Use the 'Saved only' filter at the top to see only saved papers.", hi: "कार्ड पर 'Save' क्लिक करने पर पेपर सेव होगा। ऊपर 'केवल सेव किए गए' फ़िल्टर से उन्हें अलग देखें।" },
+  { bn: "দুই বা তিনটি কার্ডে 'তুলনা' চেকবক্স বাছুন। উপরের 'তুলনা করুন' বাটনে ক্লিক করলে পাশাপাশি টেবিলে দেখাবে।", en: "Tick 'Compare' on two or three cards. Click 'Compare' at the top to see them side by side.", hi: "दो या तीन कार्ड पर 'तुलना' चेकबॉक्स चुनें। ऊपर 'तुलना करें' बटन दबाएं, वे साथ-साथ दिखेंगे।" },
+  { bn: "উপরের '+ নতুন পেপার' বাটনে ক্লিক করুন। নাম, লেখক, বছর, দেশ লিখে সেভ করুন। এটি আপনার ব্রাউজারে সেভ হবে।", en: "Click '+ New paper' at the top. Enter title, author, year and country, then save. It is saved in your browser.", hi: "ऊपर '+ नया पेपर' पर क्लिक करें। नाम, लेखक, वर्ष और देश भरकर सेव करें। यह आपके ब्राउज़र में सेव होगा।" },
+  { bn: "পেপার খুলে (পড়ুন) 'ছবি' থেকে ফাইল আপলোড করুন। কার্ডে ছবি দেখাবে। মুছতে 'ছবি মুছুন' ক্লিক করুন।", en: "Open a paper with 'Read', then upload a file under 'Image'. It will show on the card. Click 'Remove image' to delete it.", hi: "पेपर खोलें ('पढ़ें') और 'छवि' से फ़ाइल अपलोड करें। कार्ड पर छवि दिखेगी। हटाने के लिए 'छवि हटाएं' दबाएं।" },
+  { bn: "পেপার খুলে (পড়ুন) উইন্ডোর নিচে নোট লিখুন, তারপর 'নোট সেভ করুন' ক্লিক করুন।", en: "Open a paper with 'Read', write your note at the bottom of the window, then click 'Save note'.", hi: "पेपर खोलें ('पढ़ें'), विंडो के नीचे नोट लिखें, फिर 'नोट सेव करें' दबाएं।" },
+  { bn: "উপরের 'সেটিংস' ক্লিক করুন। ওয়ালপেপার গ্যালারি থেকে বাছুন, '+ নতুন ওয়ালপেপার' দিয়ে নিজের ছবি যোগ করুন, রং পিকার দিয়ে অ্যাকসেন্ট রং বদলান।", en: "Click 'Settings' at the top. Pick a wallpaper from the gallery, add your own with '+ New wallpaper', and change the accent colour with the colour picker.", hi: "ऊपर 'सेटिंग्स' पर क्लिक करें। गैलरी से वॉलपेपर चुनें, '+ नया वॉलपेपर' से अपनी छवि जोड़ें, और रंग पिकर से एक्सेंट रंग बदलें।" },
+  { bn: "নতুন ওয়ালপেপার আপলোড করলে ক্রপ উইন্ডো আসবে। আকার বাছুন, ছবি টেনে ঠিক করুন, জুম করে 'ক্রপ করে সেভ করুন' ক্লিক করুন।", en: "After uploading a new wallpaper, a crop window opens. Choose the ratio, drag the image to position it, zoom if needed, then click 'Crop & save'.", hi: "नया वॉलपेपर अपलोड करने पर क्रॉप विंडो खुलेगी। अनुपात चुनें, छवि खींचकर सही करें, ज़ूम करें, फिर 'क्रॉप करके सेव करें' दबाएं।" },
+  { bn: "সেটিংসে 'নাম রিসেট' ক্লিক করলে নাম মুছে লগইন স্ক্রিন আবার আসবে। 'সব সেটিংস রিসেট' দিলে ওয়ালপেপার, রং, নাম সব ডিফল্ট হবে।", en: "'Reset name' in Settings clears the name and shows the login screen again. 'Reset all settings' restores wallpaper, colour and name to default.", hi: "सेटिंग्स में 'नाम रीसेट' से नाम हटेगा और लॉगिन स्क्रीन फिर आएगी। 'सभी सेटिंग रीसेट' से वॉलपेपर, रंग और नाम डिफ़ॉल्ट हो जाएंगे।" },
+  { bn: "উপরের কার্ডগুলোতে মোট পেপার, বাংলাদেশ ও আন্তর্জাতিক পেপার, লেখক, ফেবারিট এবং সম্প্রতি দেখা পেপারের সংখ্যা দেখা যায়।", en: "The cards at the top show total papers, Bangladesh and international papers, authors, favourites and recently viewed papers.", hi: "ऊपर के कार्ड में कुल पेपर, बांग्लादेश और अंतरराष्ट्रीय पेपर, लेखक, पसंदीदा और हाल में देखे गए पेपर की संख्या दिखती है।" },
+  { bn: "সার্চ বক্সে পেপারের নাম বা লেখক লিখুন। 'সব বছর' ড্রপডাউন থেকে নির্দিষ্ট বছর বাছাই করতে পারেন।", en: "Type a paper title or author in the search box. Use the 'All years' dropdown to pick a specific year.", hi: "सर्च बॉक्स में पेपर का नाम या लेखक लिखें। 'सभी वर्ष' ड्रॉपडाउन से कोई वर्ष चुन सकते हैं।" },
+  { bn: "অ্যাবস্ট্রাক্ট, মেথডোলজি, ডেটাসেট ও DOI পড়ার উইন্ডো এবং তুলনা টেবিলে দেখা যায়। যেখানে তথ্য নেই সেখানে 'তথ্য নেই' লেখা থাকে।", en: "Abstract, methodology, dataset and DOI appear in the reader window and the comparison table. Where information is missing it says 'No information'.", hi: "एब्स्ट्रैक्ट, मेथडोलॉजी, डेटासेट और DOI रीडर विंडो और तुलना तालिका में दिखते हैं। जहां जानकारी नहीं है वहां 'जानकारी नहीं है' लिखा होता है।" },
+  { bn: "নতুন পেপার, নোট, ছবি ও সেটিংস সব আপনার ব্রাউজারেই সেভ হয়। অন্য কম্পিউটারে দেখা যাবে না, আর ব্রাউজারের ডেটা মুছলে এগুলোও চলে যাবে।", en: "New papers, notes, images and settings are saved only in your browser. They will not appear on another computer, and clearing browser data will remove them.", hi: "नए पेपर, नोट, छवियां और सेटिंग्स केवल आपके ब्राउज़र में सेव होते हैं। दूसरे कंप्यूटर पर नहीं दिखेंगे, और ब्राउज़र डेटा मिटाने पर ये भी चले जाएंगे।" }
+];
+
+/* Bhinno bhashay keyword (HELP_KB er sathe mil ache) */
+const HELP_EXTRA = [
+  ["লগইন", "প্রবেশ", "लॉगिन", "প্রবেশ"],
+  ["দেশ", "देश", "country"],
+  ["পড়", "पढ़", "read"],
+  ["ডাউনলোড", "डाउनलोड", "पीडीएफ"],
+  ["সেভ", "सेव", "সংরক্ষ", "सहेज"],
+  ["তুলনা", "तुलना"],
+  ["যোগ", "নতুন", "जोड़", "नया"],
+  ["ছবি", "छवि", "फोटो"],
+  ["নোট", "नोट"],
+  ["সেটিং", "ওয়ালপেপার", "রং", "सेटिंग", "वॉलपेपर", "रंग"],
+  ["ক্রপ", "क्रॉप"],
+  ["রিসেট", "रीसेट", "मिटा"],
+  ["ড্যাশবোর্ড", "সংখ্যা", "डैशबोर्ड", "संख्या"],
+  ["খুঁজ", "সার্চ", "खोज", "सर्च"],
+  ["অ্যাবস্ট্রাক্ট", "এবস্ট্রাক্ট", "एब्स्ट्रैक्ट"],
+  ["ডেটা", "তথ্য", "डेटा"]
+];
+
+const HELP_GREET = {
+  bn: "আসসালামু আলাইকুম! আমি এই ওয়েবসাইটের হেল্প সহকারী। আপনি কী জানতে চান? যেমন: পেপার কীভাবে সেভ করব, ওয়ালপেপার কীভাবে বদলাব, বা নতুন পেপার কীভাবে যোগ করব।",
+  en: "Assalamu alaikum! I am the help assistant for this website. What would you like to know? For example: how to save a paper, change the wallpaper, or add a new paper.",
+  hi: "अस्सलामु अलैकुम! मैं इस वेबसाइट का सहायक हूं। आप क्या जानना चाहते हैं? जैसे: पेपर कैसे सेव करें, वॉलपेपर कैसे बदलें, या नया पेपर कैसे जोड़ें।",
+  banglish: "Assalamu alaikum! Ami ei website er help assistant. Apni ki jante chan? Jemon: paper kivabe save korbo, wallpaper kivabe change korbo, ba notun paper kivabe add korbo."
+};
+const HELP_FALLBACK = {
+  bn: "এই প্রশ্নের উত্তর আমার জানা নেই। নিচের দ্রুত প্রশ্নগুলো দেখুন, অথবা প্রশ্নটি অন্যভাবে লিখে দেখুন।",
+  en: "I do not have an answer to that. Try the quick questions below, or rephrase your question.",
+  hi: "इस प्रश्न का उत्तर मेरे पास नहीं है। नीचे के त्वरित प्रश्न देखें, या प्रश्न दूसरे तरीके से लिखकर देखें।",
+  banglish: "Ei prosno ta amar jana nei. Quick button gulo theke bachun, ba prosno ta onno bhabe likhe dekhun."
+};
+
+function helpAnswer(q) {
+  const lang = currentLang;
+  const t = q.toLowerCase().trim();
+  if (t === "" || /^(hi|hello|hey|salam|assalamu|kemon|help|হ্যালো|সালাম|নমস্কার|नमस्ते|हेलो|हैलो)/.test(t)) {
+    return HELP_GREET[lang] || HELP_GREET.banglish;
+  }
+  let bestIdx = -1, score = 0;
+  HELP_KB.forEach((item, i) => {
+    const keys = [...item.keys, ...(HELP_EXTRA[i] || [])];
+    const s = keys.filter(k => t.includes(k.toLowerCase())).length;
+    if (s > score) { score = s; bestIdx = i; }
+  });
+  if (bestIdx < 0) return HELP_FALLBACK[lang] || HELP_FALLBACK.banglish;
+  if (lang === "banglish") return HELP_KB[bestIdx].a;
+  return HELP_T[bestIdx][lang] || HELP_T[bestIdx].en;
+}
+
+function addBub(text, who) {
+  const d = document.createElement("div");
+  d.className = "bub " + who;
+  d.textContent = text;
+  $("helpLog").appendChild(d);
+  $("helpLog").scrollTop = $("helpLog").scrollHeight;
+}
+
+function sendHelp(q) {
+  const text = q.trim();
+  if (!text) return;
+  addBub(text, "u");
+  addBub(helpAnswer(text), "b");
+}
+
+function openHelp() {
+  if (!$("helpLog").children.length) addBub(helpAnswer(""), "b");
+  $("helpModal").classList.remove("hidden");
+  translateUI();
+}
+
+/* ===== CROP ===== */
+let cropImg = null, cropOX = 0, cropOY = 0, cropDrag = null;
+
+function loadImageFile(file, cb) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => cb(img);
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function cropRatio() { return Number($("cropRatio").value); }
+
+function cropBox() {
+  const w = 480;
+  return { w, h: Math.round(w / cropRatio()) };
+}
+
+function baseDims(pw, ph) {
+  const scale = Math.max(pw / cropImg.width, ph / cropImg.height) * Number($("cropZoom").value);
+  return { dw: cropImg.width * scale, dh: cropImg.height * scale };
+}
+
+function drawCrop() {
+  if (!cropImg) return;
+  const { w, h } = cropBox();
+  const c = $("cropCanvas");
+  c.width = w;
+  c.height = h;
+  const { dw, dh } = baseDims(w, h);
+  const maxX = Math.max(0, (dw - w) / 2);
+  const maxY = Math.max(0, (dh - h) / 2);
+  cropOX = Math.max(-maxX, Math.min(maxX, cropOX));
+  cropOY = Math.max(-maxY, Math.min(maxY, cropOY));
+  const ctx = c.getContext("2d");
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, w, h);
+  ctx.drawImage(cropImg, (w - dw) / 2 + cropOX, (h - dh) / 2 + cropOY, dw, dh);
+}
+
+function openCrop(img) {
+  cropImg = img;
+  cropOX = 0;
+  cropOY = 0;
+  $("cropZoom").value = 1;
+  drawCrop();
+  $("cropModal").classList.remove("hidden");
+  translateUI();
+}
+
+function saveCropped() {
+  if (!cropImg) return;
+  const OUT = 1600;
+  const outW = OUT;
+  const outH = Math.round(OUT / cropRatio());
+  const { w: pw, h: ph } = cropBox();
+  const k = outW / pw;
+  const { dw, dh } = baseDims(pw, ph);
+  const c = document.createElement("canvas");
+  c.width = outW;
+  c.height = outH;
+  c.getContext("2d").drawImage(cropImg, (outW - dw * k) / 2 + cropOX * k, (outH - dh * k) / 2 + cropOY * k, dw * k, dh * k);
+  const data = c.toDataURL("image/jpeg", 0.85);
+
+  const s = settingsStore();
+  const list = s.wallpapers || [];
+  const id = "w" + Date.now();
+  s.wallpapers = [...list, { id, name: "Custom", data }];
+  s.wallpaperId = id;
+  if (saveStore("ars_settings", s)) {
+    cropImg = null;
+    $("cropModal").classList.add("hidden");
+    renderWallGrid();
+    applySettings();
+  }
+}
+
+function openSettings() {
+  const s = settingsStore();
+  renderWallGrid();
+  $("accentInput").value = s.accent || "#4f7cff";
+  $("settingsName").value = s.name || "";
+  $("settingsModal").classList.remove("hidden");
+  translateUI();
+}
+
+function openCompare() {
+  const list = allPapers().filter(p => compare.has(p.id));
+  if (list.length < 2) { alert(T("Tulona korar jonno antot 2 ta paper select korun.")); return; }
+  const row = (label, fn) =>
+    `<tr><th>${label}</th>${list.map(p => `<td>${fn(p)}</td>`).join("")}</tr>`;
+  $("compareTable").innerHTML = `
+    <table>
+      <thead><tr><th>Tothyo</th>${list.map(p => `<th>${escapeHtml(p.title)}</th>`).join("")}</tr></thead>
+      <tbody>
+        ${row("লেখক", p => escapeHtml(p.author))}
+        ${row("বছর", p => p.year)}
+        ${row("দেশ", p => escapeHtml(p.country))}
+        ${row("DOI", p => escapeHtml(getDetails(p).doi) || "তথ্য নেই")}
+        ${row("Abstract", p => escapeHtml(getDetails(p).abstract) || "তথ্য নেই")}
+        ${row("Methodology", p => escapeHtml(getDetails(p).methodology) || "তথ্য নেই")}
+        ${row("Dataset", p => escapeHtml(getDetails(p).dataset) || "তথ্য নেই")}
+        ${row("Findings", p => escapeHtml(getDetails(p).findings) || "তথ্য নেই")}
+      </tbody>
+    </table>`;
+  $("compareModal").classList.remove("hidden");
+  translateUI();
+}
+
+function closeReader() {
+  $("readerFrame").src = "about:blank";
+  $("readerModal").classList.add("hidden");
+}
+
+function render() {
+  updateStats();
+  const q = $("search").value.trim().toLowerCase();
+  const sort = $("sortSel").value;
+  let list = allPapers().filter(p =>
+    (currentCountry ? p.country === currentCountry : $("savedOnly").value === "saved") &&
+    (!q || p.title.toLowerCase().includes(q) || p.author.toLowerCase().includes(q)) &&
+    ($("yearSel").value === "" || String(p.year) === $("yearSel").value) &&
+    ($("savedOnly").value === "all" || saved.has(p.id))
+  );
+  list.sort((a, b) =>
+    sort === "year-desc" ? b.year - a.year :
+    sort === "year-asc" ? a.year - b.year :
+    a.title.localeCompare(b.title));
+
+  $("grid").innerHTML = list.map(p => `
+    <article class="paper">${imagesStore()[p.id] ? `<img src="${imagesStore()[p.id]}" alt="" style="width:100%;height:130px;object-fit:cover;border-radius:8px;">` : ""}
+      <span class="meta">${p.year}</span>
+      <h3>${escapeHtml(p.title)}</h3>
+      <span class="meta">${escapeHtml(p.author)}</span>
+      <div class="actions">
+        <label class="meta" style="display:flex;align-items:center;gap:4px;"><input type="checkbox" data-compare="${p.id}" ${compare.has(p.id) ? "checked" : ""}> Tulona</label>
+        <button class="btn" data-read="${p.id}">Porhun</button>
+        <button class="btn" data-save="${p.id}">${saved.has(p.id) ? "Saved ✓" : "Save"}</button>
+        ${p.url
+          ? `<a class="btn primary" href="${p.url}" download target="_blank" rel="noopener">Download</a>`
+          : `<button class="btn primary" disabled>Download</button>`}
+      </div>
+    </article>`).join("");
+
+  $("empty").textContent = currentCountry ? "Kono paper paoa jay nai." : "⋮ theke desh select korun.";
+  $("empty").classList.toggle("hidden", list.length > 0);
+  translateUI();
+}
+
+$("grid").addEventListener("click", e => {
+  const b = e.target.closest("[data-save]");
+  if (!b) return;
+  const id = b.dataset.save;
+  saved.has(id) ? saved.delete(id) : saved.add(id);
+  persistSaved();
+  render();
+});
+
+["search", "sortSel", "savedOnly"].forEach(id => $(id).addEventListener("input", render));
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+}
+</script>
+</body>
+</html>
